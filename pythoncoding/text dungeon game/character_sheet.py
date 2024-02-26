@@ -1,8 +1,11 @@
 import weapon_sheet as ws
 from healthbar import Healthbar
 
-class Character():
-    # base character class
+
+class Character(): #TODO: implement dying, cuz everyone is invincible now
+    """
+    base character class, any living thing inherits this calss
+    """
     def __init__(self, name: str, max_health: int, inventory: dict={}) -> None:
         self.name = name
         self.max_health = max_health
@@ -14,7 +17,7 @@ class Character():
     def attack(self, other):
         if other.vulnerable:
             other.health -= self.weapon.damage
-            other.health = max(other.health, 0)
+            other.health = max(other.health, 0) # a barrier so you dont go under 0
             other.healthbar.update()
             print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {self.weapon.damage} damage!")
         else:
@@ -22,7 +25,10 @@ class Character():
         other.healthbar.display_health()
 
 
-class Player(Character):
+class Player(Character): #TODO: add swapping weapons, like an equip function that takes from the inventory
+    """
+    main player of the game
+    """
     def __init__(self, name: str, max_health: int, inventory: dict={}) -> None:
         super().__init__(name, max_health, inventory)
         self.healthbar = Healthbar(self)
@@ -31,20 +37,22 @@ class Player(Character):
         self.vulnerable = False
         print(f"{self.name} blocks the upcoming attack")
     
-    def heal(self): #TODO: make this method universal for all items that are in the inv, like equipping weapons
-        item = "health potion"
+    def use_item(self, item): #TODO: make this method universal for all items that are in the inv, like equipping weapons
         if item in self.inventory and self.inventory.get(item) > 0:
-            self.health += 10
-            self.health = min(self.health, self.max_health)
+            self.health += item.heal_amount
+            self.health = min(self.health, self.max_health) # a barrier so you dont go over max health
             self.inventory[item] -= 1
             self.healthbar.update()
-            print(f"{self.name} used {item}, +{10} health")
+            print(f"{self.name} used {item.name}, +{item.heal_amount} health")
         else:
-            print(f"{self.name} ran out of {item}s")
+            print(f"{self.name} ran out of {item.name}")
         self.healthbar.display_health()
 
 
 class Enemy(Character):
+    """
+    basic enemy class
+    """
     def __init__(self, name: str, max_health: int, inventory: dict={}) -> None:
         super().__init__(name, max_health, inventory)
         self.healthbar = Healthbar(self)
