@@ -1,4 +1,6 @@
+#TODO: merege weapon and item sheet together to make less imports possible
 
+ 
 class Weapon():
     # base weapon class
     def __init__(self, name: str, damage: int, damage_type: str, weapon_range: str, weight: int = 10) -> None:
@@ -12,6 +14,8 @@ iron_sword = Weapon(name="Iron sword", damage=5, damage_type="slashing", weapon_
 
 short_bow = Weapon(name="Short bow", damage=3, damage_type="piercing", weapon_range="mid")
 
-fists = Weapon(name="Fists", damage=2, damage_type="bludgeoning", weapon_range="close")
+fists = Weapon(name="Fists", damage=1, damage_type="bludgeoning", weapon_range="close")
 
 bow = Weapon(name="Bow", damage=5, damage_type="piercing", weapon_range="long")
+
+dagger = Weapon(name="Dagger", damage=4, damage_type="piercing", weapon_range="close")
