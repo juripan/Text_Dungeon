@@ -33,7 +33,7 @@ class Player(Character): #TODO: add swapping weapons, like an equip function tha
         super().__init__(name, max_health, inventory)
         self.healthbar = Healthbar(self)
     
-    def block_attack(self):
+    def block_attack(self): # maybe make it block a percentage of damage but not the whole blow, maybe repurpose the vulnerable bool for dodging
         self.vulnerable = False
         print(f"{self.name} blocks the upcoming attack")
     
