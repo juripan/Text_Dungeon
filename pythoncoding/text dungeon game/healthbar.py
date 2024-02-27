@@ -1,3 +1,4 @@
+# class that draws and updates the healthbar of any Character
 
 class Healthbar:
     symbol_remaining: str = "■"

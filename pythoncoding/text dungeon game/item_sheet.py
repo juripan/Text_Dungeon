@@ -1,8 +1,10 @@
-#TODO: add more items like potions, or shields to be used with the block_attack method
+#TODO: add more items like potions
+#TODO: add use attributes to all item consumable classes
 
 class Item():
     """
     base item class
+    any item iherits this class
     """
     def __init__(self, name: str, cost: int) -> None:
         self.name = name
@@ -23,8 +25,14 @@ class Armor(Item):
         self.resistance = resistance
 
 
-class HealingItem(Item): #TODO: add use attributes to all item consumable classes
-    def __init__(self, name: str, cost: int, heal_amount: int):
+class Shield(Item):
+    def __init__(self, name: str, cost: int, sturdiness: int) -> None:
+        super().__init__(name, cost)
+        self.sturdiness = sturdiness
+
+
+class HealingItem(Item):
+    def __init__(self, name: str, cost: int, heal_amount: int) -> None:
         super().__init__(name, cost)
         self.heal_amount = heal_amount
     
@@ -47,17 +55,24 @@ bow = Weapon(name="Bow", damage=50, damage_type="piercing", weapon_range="long",
 dagger = Weapon(name="Dagger", damage=40, damage_type="piercing", weapon_range="close", cost=None)
 
 
-small_health = HealingItem(name="Small potion of healing", cost=20, heal_amount=150)
+no_armor = Armor(name="No armor", resistance=0, cost=None)
 
-medium_health = HealingItem(name="Potion of healing", cost=30, heal_amount=300)
+leather_armor = Armor(name="Leather armor", resistance=1, cost=None)
 
-big_health = HealingItem(name="Big potion of healing", cost=50, heal_amount=500)
+chainmail_armor = Armor(name="Chainmail armor", resistance=2, cost=None)
+
+iron_armor = Armor(name="Iron armor", resistance=6, cost=None)
 
 
-no_armor = Armor(name="No armor", cost=0, resistance=0)
+no_shield = Shield(name="No shield", sturdiness=0, cost=None)
 
-leather_armor = Armor(name="Leather armor", cost=0, resistance=1)
+wooden_shield = Shield(name="Wooden shield", sturdiness=2, cost=None)
 
-chainmail_armor = Armor(name="Chainmail armor", cost=0, resistance=2)
+iron_shield = Shield(name="Iron shield", sturdiness=4, cost=None)
 
-iron_armor = Armor(name="Iron armor", cost=0, resistance=6)
+
+small_health = HealingItem(name="Small potion of healing", heal_amount=150, cost=None)
+
+medium_health = HealingItem(name="Potion of healing", heal_amount=300, cost=None)
+
+big_health = HealingItem(name="Big potion of healing", heal_amount=500, cost=None)

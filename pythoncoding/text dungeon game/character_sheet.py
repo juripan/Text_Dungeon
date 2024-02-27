@@ -12,12 +12,20 @@ class Character(): #TODO: implement dying, cuz everyone is invincible now
         self.health = max_health
         self.weapon = itm.fists
         self.armor = itm.no_armor
-        self.vulnerable: bool = True
+        self.shield = itm.no_shield
+        self.shielded: bool = False
+        self.vulnerable: bool = True # maybe repurpose the vulnerable bool for dodging
         self.inventory = inventory
     
     def attack(self, other):
-        if other.vulnerable:
-            attack_damage = int(self.weapon.damage * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
+        if other.vulnerable:  
+            if other.shielded:
+                attack_damage = int(self.weapon.damage * ((100 - other.shield.sturdiness * 15) / 100)) # if shield is up then lowers the damage
+                print(f"{other.name} blocked the attack!")
+                other.shielded = False # resets the shield
+            else:
+                attack_damage = int(self.weapon.damage * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
+            
             other.health -= attack_damage
             other.health = max(other.health, 0) # a barrier so you dont go under 0
             other.healthbar.update()
@@ -35,11 +43,11 @@ class Player(Character):
         super().__init__(name, max_health, inventory)
         self.healthbar = Healthbar(self)
     
-    def block_attack(self): # maybe make it block a percentage of damage but not the whole blow, maybe repurpose the vulnerable bool for dodging
-        self.vulnerable = False
+    def block_attack(self):
+        self.shielded = True
         print(f"{self.name} braces for the upcoming attack")
     
-    def use_item(self, item): # using consumables like potions
+    def use_item(self, item): # using consumables like potions, maybe make it universal so its also usable for armor and weapons
         if item in self.inventory and self.inventory.get(item) > 0:
             item.use(self)
         else:
@@ -52,6 +60,8 @@ class Player(Character):
                 self.weapon = item
             elif isinstance(item, itm.Armor):
                 self.armor = item
+            elif isinstance(item, itm.Shield):
+                self.shield = item
             print(f"{self.name} equipped {item.name}")
         else:
             print(f"{self.name} doesnt have {item.name}")
