@@ -1,4 +1,3 @@
-import weapon_sheet as ws
 import item_sheet as itm
 from healthbar import Healthbar
 
@@ -11,23 +10,24 @@ class Character(): #TODO: implement dying, cuz everyone is invincible now
         self.name = name
         self.max_health = max_health
         self.health = max_health
-        self.weapon = ws.fists
+        self.weapon = itm.fists
         self.armor = itm.no_armor
-        self.vulnerable = True
+        self.vulnerable: bool = True
         self.inventory = inventory
     
-    def attack(self, other): # add armor calculations to calc damage
+    def attack(self, other):
         if other.vulnerable:
-            other.health -= self.weapon.damage
+            attack_damage = int(self.weapon.damage * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
+            other.health -= attack_damage
             other.health = max(other.health, 0) # a barrier so you dont go under 0
             other.healthbar.update()
-            print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {self.weapon.damage} damage!")
+            print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage!")
         else:
             print(f"{self.name}s attack does nothing")
         other.healthbar.display_health()
 
 
-class Player(Character): #TODO: add swapping weapons, like an equip function that takes from the inventory
+class Player(Character):
     """
     main player of the game
     """
@@ -37,26 +37,24 @@ class Player(Character): #TODO: add swapping weapons, like an equip function tha
     
     def block_attack(self): # maybe make it block a percentage of damage but not the whole blow, maybe repurpose the vulnerable bool for dodging
         self.vulnerable = False
-        print(f"{self.name} blocks the upcoming attack")
+        print(f"{self.name} braces for the upcoming attack")
     
-    def use_item(self, item): #TODO: make this method universal for all items that are in the inv, not weapons and armor though
+    def use_item(self, item): # using consumables like potions
         if item in self.inventory and self.inventory.get(item) > 0:
-            self.health += item.heal_amount
-            self.health = min(self.health, self.max_health) # a barrier so you dont go over max health
-            self.inventory[item] -= 1
-            self.healthbar.update()
-            print(f"{self.name} used {item.name}, +{item.heal_amount} health")
+            item.use(self)
         else:
             print(f"{self.name} ran out of {item.name}")
         self.healthbar.display_health()
     
     def equip(self, item): # used for equiping weapons and armor
         if item in self.inventory:
-            if isinstance(item, ws.Weapon):
+            if isinstance(item, itm.Weapon):
                 self.weapon = item
             elif isinstance(item, itm.Armor):
                 self.armor = item
             print(f"{self.name} equipped {item.name}")
+        else:
+            print(f"{self.name} doesnt have {item.name}")
 
 
 class Enemy(Character):
