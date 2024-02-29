@@ -1,5 +1,5 @@
-#TODO: add more items like potions
-#TODO: add use attributes to all item consumable classes
+# add more items like potions
+# in the future add use attributes to all item consumable classes
 
 class Item():
     """
@@ -36,12 +36,25 @@ class HealingItem(Item):
         super().__init__(name, cost)
         self.heal_amount = heal_amount
     
-    def use(self, other):
-        other.health += self.heal_amount
-        other.health = min(other.health, other.max_health) # a barrier so you dont go over max health
-        other.inventory[self] -= 1
-        other.healthbar.update()
-        print(f"{other.name} used {self.name}, +{self.heal_amount} health")
+    def use(self, user):
+        user.health += self.heal_amount
+        user.health = min(user.health, user.max_health) # a barrier so you dont go over max health
+        user.inventory[self] -= 1
+        user.healthbar.update()
+        print(f"{user.name} used {self.name}, +{self.heal_amount} health")
+
+
+class OffensiveItem(Item): #note: goes through armor on purpose
+    def __init__(self, name: str, cost: int, damage: int) -> None:
+        super().__init__(name, cost)
+        self.damage = damage
+    
+    def use(self, user, target):
+        target.health -= self.damage
+        target.health = max(target.health, 0) # a barrier so you dont go under 0
+        user.inventory[self] -= 1
+        target.healthbar.update()
+        print(f"{user.name} used {self.name}, and dealt {self.damage} damage to {target.name}")
 
 
 iron_sword = Weapon(name="Iron sword", damage=50, damage_type="slashing", weapon_range="close", cost=None)
@@ -50,9 +63,9 @@ short_bow = Weapon(name="Short bow", damage=30, damage_type="piercing", weapon_r
 
 fists = Weapon(name="Fists", damage=10, damage_type="bludgeoning", weapon_range="close", cost=None)
 
-bow = Weapon(name="Bow", damage=50, damage_type="piercing", weapon_range="long", cost=None)
+bow = Weapon(name="Bow", damage=40, damage_type="piercing", weapon_range="long", cost=None)
 
-dagger = Weapon(name="Dagger", damage=40, damage_type="piercing", weapon_range="close", cost=None)
+dagger = Weapon(name="Dagger", damage=35, damage_type="piercing", weapon_range="close", cost=None)
 
 
 no_armor = Armor(name="No armor", resistance=0, cost=None)
@@ -76,3 +89,7 @@ small_health = HealingItem(name="Small potion of healing", heal_amount=150, cost
 medium_health = HealingItem(name="Potion of healing", heal_amount=300, cost=None)
 
 big_health = HealingItem(name="Big potion of healing", heal_amount=500, cost=None)
+
+bomb = OffensiveItem(name="Bomb", damage=80, cost=None)
+
+dynamite = OffensiveItem(name="stick of dynamite", damage=50, cost=None)

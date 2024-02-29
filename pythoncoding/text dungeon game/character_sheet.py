@@ -2,7 +2,7 @@ import item_sheet as itm
 from healthbar import Healthbar
 
 
-class Character(): #TODO: implement dying, cuz everyone is invincible now
+class Character():
     """
     base character class, any living thing inherits this calss
     """
@@ -17,8 +17,11 @@ class Character(): #TODO: implement dying, cuz everyone is invincible now
         self.vulnerable: bool = True # maybe repurpose the vulnerable bool for dodging
         self.inventory = inventory
     
+    def death(self): #TODO: implement dying, cuz everyone is invincible now
+        pass
+
     def attack(self, other):
-        if other.vulnerable:  
+        if other.vulnerable:
             if other.shielded:
                 attack_damage = int(self.weapon.damage * ((100 - other.shield.sturdiness * 15) / 100)) # if shield is up then lowers the damage
                 print(f"{other.name} blocked the attack!")
@@ -32,7 +35,6 @@ class Character(): #TODO: implement dying, cuz everyone is invincible now
             print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage!")
         else:
             print(f"{self.name}s attack does nothing")
-        other.healthbar.display_health()
 
 
 class Player(Character):
@@ -47,12 +49,14 @@ class Player(Character):
         self.shielded = True
         print(f"{self.name} braces for the upcoming attack")
     
-    def use_item(self, item): # using consumables like potions, maybe make it universal so its also usable for armor and weapons
+    def use_item(self, item, target): #self is the player, other is the attacker
         if item in self.inventory and self.inventory.get(item) > 0:
-            item.use(self)
+            if isinstance(item, itm.HealingItem):
+                item.use(self)
+            elif isinstance(item, itm.OffensiveItem):
+                item.use(self, target)
         else:
             print(f"{self.name} ran out of {item.name}")
-        self.healthbar.display_health()
     
     def equip(self, item): # used for equiping weapons and armor
         if item in self.inventory:
