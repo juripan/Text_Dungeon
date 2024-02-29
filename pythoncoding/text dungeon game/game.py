@@ -10,6 +10,8 @@ enemy = Enemy(name="Ur mom", max_health=500)
 
 
 while True:
+    player.menu.display_menu(player)
+    """
     enemy.attack(player)
     if player.health < 800:
         player.use_item(itm.small_health, target=None) # target is ignored with healing items
@@ -20,7 +22,6 @@ while True:
     #player.equip(itm.iron_armor)
     #player.equip(itm.iron_shield)
     #player.attack(enemy)
-    
+    """
     player.healthbar.display_health()
     enemy.healthbar.display_health()
-    input()

@@ -1,6 +1,6 @@
 import item_sheet as itm
 from healthbar import Healthbar
-
+from menu import Menu
 
 class Character():
     """
@@ -44,6 +44,7 @@ class Player(Character):
     def __init__(self, name: str, max_health: int, inventory: dict={}) -> None:
         super().__init__(name, max_health, inventory)
         self.healthbar = Healthbar(self)
+        self.menu = Menu(self)
     
     def block_attack(self):
         self.shielded = True
