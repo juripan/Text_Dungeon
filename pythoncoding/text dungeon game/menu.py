@@ -4,7 +4,7 @@ class Menu(): #TODO: need to pass the enemy object into here also to know what t
     symbol_border: str = "-" 
     width: int = 30
 
-    def __init__(self, entity) -> None:
+    def __init__(self, entity) -> None: # entity is the player
         self.entity = entity
     
     def action(self, entity, choice):
@@ -17,7 +17,7 @@ class Menu(): #TODO: need to pass the enemy object into here also to know what t
         else:
             print("???") #TODO: think of a new action for the player to do
 
-    def display_menu(self, entity):
+    def display_menu(self, entity): # figure out what to do with the entity bs and that it doesnt need to pass it as an argument
         print("What would you like to do?")
         choices_display = "| Fight | Defend | Item | ??? |"
         print(self.symbol_border * len(choices_display))
@@ -25,6 +25,6 @@ class Menu(): #TODO: need to pass the enemy object into here also to know what t
         print(self.symbol_border * len(choices_display))
         print(choices_display)
         print(self.symbol_border * len(choices_display))
-        choice = input().lower()
+        choice = input("->").lower()
         Menu.action(self, entity, choice)
 
