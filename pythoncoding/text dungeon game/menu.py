@@ -1,22 +1,52 @@
 # menu class, gives the player control of their character
 
-class Menu(): #TODO: need to pass the enemy object into here also to know what the target is
+class Menu():
     symbol_border: str = "-" 
     width: int = 30
 
     def __init__(self, entity) -> None: # entity is the player
         self.entity = entity
     
-    def mini_attack_menu(self, targets): # only add attack method
-        print("put the attack function here")
+    def mini_attack_menu(self, targets):
+        print("who do you want to attack?")
+        choice = input(">").lower() # you can either use the name of the enemy or their number in the listed thext to them in console
 
-    def mini_defend_menu(self): # add dodge and shield functionality here
-        print("put defend or dodge function here")
+        for i, target in enumerate(targets):
+            if choice == target.name.lower() or choice == str(i + 1):
+                self.entity.attack(target)
+                break
+    
+    def mini_defend_menu(self):
+        print(f"1. Shield with {self.entity.shield.name}")
+        print("2. Dodge")
+        choice = input(">").lower()
 
-    def mini_item_menu(self, targets): # add equip and use item functionality here
-        print("put a new menu function for opening the inventory here")
+        if choice == "shield" or choice == "1":
+            self.entity.block_attack()
+        elif choice == "dodge" or choice == "2":
+            self.entity.dodge()
 
-    def run(self): # add run mechanics here
+    def mini_item_menu(self, targets):
+        print("Use or equip item: ")
+        for i, item in enumerate(self.entity.inventory):
+            print(f"{i + 1}. {item.name}: {self.entity.inventory.get(item)}")
+        choice = input(">").lower()
+        print("on who?")
+        choice2 = input(">").lower()
+
+        for i, target in enumerate(targets):
+            if target.name.lower() == choice2 or choice2 == str(i + 1):
+                aimed_at = target
+                break
+        else:
+            aimed_at = self.entity # if its not in the list of enemies it gets used on the player
+
+        for i, item in enumerate(self.entity.inventory):
+            if choice == item.name.lower() or choice == str(i + 1):
+                self.entity.use_item(item, target=aimed_at)
+                break
+
+    def run(self): #TODO: add run mechanics here
         print("add a run function here")
     
     def action(self, targets, choice):
@@ -29,8 +59,12 @@ class Menu(): #TODO: need to pass the enemy object into here also to know what t
         elif choice == "run" or choice == "4":
             Menu.run(self)
     
-    def display_battle_menu(self, targets): # figure out what to do with the entity bs and that it doesnt need to pass it as an argument
-        print(targets)
+    def display_battle_menu(self, targets):
+        print("Enemies:")
+        for i, target in enumerate(targets): # prints out every enemy thats in the fight
+            print(f"| {i+1}. {target.name}", end=" ")
+        print("|") # just so it ends the list and adds a newline
+        
         print("What would you like to do?")
         choices_display = "| Attack | Defend | Item | Run |"
         print(self.symbol_border * len(choices_display))
@@ -40,4 +74,3 @@ class Menu(): #TODO: need to pass the enemy object into here also to know what t
         print(self.symbol_border * len(choices_display))
         choice = input(">").lower()
         Menu.action(self, targets, choice)
-

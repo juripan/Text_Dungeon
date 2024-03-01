@@ -1,3 +1,5 @@
+from random import randint
+
 import item_sheet as itm
 from healthbar import Healthbar
 from menu import Menu
@@ -14,7 +16,7 @@ class Character(): #TODO: add a stats attribute to Character class
         self.armor = itm.no_armor
         self.shield = itm.no_shield
         self.shielded: bool = False
-        self.vulnerable: bool = True # maybe repurpose the vulnerable bool for dodging
+        self.vulnerable: bool = True
         self.inventory = inventory
     
     def death(self): #TODO: implement dying, cuz everyone is invincible now
@@ -35,6 +37,7 @@ class Character(): #TODO: add a stats attribute to Character class
             print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage!")
         else:
             print(f"{self.name}s attack missed")
+            other.vulnerable = True
 
 
 class Player(Character):
@@ -51,29 +54,17 @@ class Player(Character):
         self.shielded = True
         print(f"{self.name} braces for the upcoming attack")
     
-    def use_item(self, item, target): #self is the player, target is the enemy
+    def dodge(self):
+        print(f"{self.name} attempts to dodge the upcoming attack")
+        roll = randint(0 ,6)
+        if roll == 6:
+            self.vulnerable = False
+    
+    def use_item(self, item, target): #self is the player, target is the who its used on (you or the enemy)
         if item in self.inventory and self.inventory.get(item) > 0:
-            if isinstance(item, itm.HealingItem):
-                item.use(self)
-            elif isinstance(item, itm.OffensiveItem):
-                item.use(self, target)
+            item.use(self, target)
         else:
-            print(f"{self.name} ran out of {item.name}")
-    
-    def equip(self, item): # used for equiping weapons and armor
-        if item in self.inventory:
-            if isinstance(item, itm.Weapon):
-                self.weapon = item
-            elif isinstance(item, itm.Armor):
-                self.armor = item
-            elif isinstance(item, itm.Shield):
-                self.shield = item
-            print(f"{self.name} equipped {item.name}")
-        else:
-            print(f"{self.name} doesnt have {item.name}")
-    
-    def dodge(self): #TODO: add a dodge method that uses the vulnerable bool
-        pass
+            print(f"{self.name} ran out of {item.name}")       
 
 
 class Enemy(Character):
@@ -84,3 +75,11 @@ class Enemy(Character):
         super().__init__(name, max_health, inventory)
         self.healthbar = Healthbar(self)
         self.money_dropped_on_kill = money_dropped_on_kill
+
+
+player = Player(name="Player", max_health=1000, 
+                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1})
+enemy1 = Enemy(name="Ur mom", max_health=500)
+enemy2 = Enemy(name="Ur dad", max_health=700)
+
+enemies = [enemy1, enemy2] # all attackable enemies are here

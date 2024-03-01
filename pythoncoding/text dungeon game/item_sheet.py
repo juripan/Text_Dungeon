@@ -1,5 +1,4 @@
 # add more items like potions
-# in the future add use attributes to all item consumable classes
 
 class Item():
     """
@@ -17,18 +16,33 @@ class Weapon(Item):
         self.damage = damage
         self.damage_type = damage_type
         self.weapon_range = weapon_range
+    
+    def use(self, user, target): # target isnt used cuz the user is the target automatically
+        user.weapon = self
+        user.inventory[self] -= 1
+        print(f"{user.name} equipped {self.name}")
 
 
 class Armor(Item):
     def __init__(self, name: str, cost: int, resistance: int) -> None:
         super().__init__(name, cost)
         self.resistance = resistance
+    
+    def use(self, user, target): # target isnt used cuz the user is the target automatically
+        user.armor = self
+        user.inventory[self] -= 1
+        print(f"{user.name} equipped {self.name}")
 
 
 class Shield(Item):
     def __init__(self, name: str, cost: int, sturdiness: int) -> None:
         super().__init__(name, cost)
         self.sturdiness = sturdiness
+    
+    def use(self, user, target): # target isnt used cuz the user is the target automatically
+        user.shield = self
+        user.inventory[self] -= 1
+        print(f"{user.name} equipped {self.name}")
 
 
 class HealingItem(Item):
@@ -36,12 +50,12 @@ class HealingItem(Item):
         super().__init__(name, cost)
         self.heal_amount = heal_amount
     
-    def use(self, user):
-        user.health += self.heal_amount
-        user.health = min(user.health, user.max_health) # a barrier so you dont go over max health
+    def use(self, user, target):
+        target.health += self.heal_amount
+        target.health = min(target.health, target.max_health) # a barrier so you dont go over max health
         user.inventory[self] -= 1
-        user.healthbar.update()
-        print(f"{user.name} used {self.name}, +{self.heal_amount} health")
+        target.healthbar.update()
+        print(f"{user.name} used {self.name}, and healed {target.name} by {self.heal_amount} health")
 
 
 class OffensiveItem(Item): #note: goes through armor on purpose, maybe make it deal damage to all enemies at once instead
