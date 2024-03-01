@@ -2,9 +2,9 @@ import item_sheet as itm
 from healthbar import Healthbar
 from menu import Menu
 
-class Character():
+class Character(): #TODO: add a stats attribute to Character class
     """
-    base character class, any living thing inherits this calss
+    base character class, any living thing inherits this class
     """
     def __init__(self, name: str, max_health: int, inventory: dict={}) -> None:
         self.name = name
@@ -34,15 +34,16 @@ class Character():
             other.healthbar.update()
             print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage!")
         else:
-            print(f"{self.name}s attack does nothing")
+            print(f"{self.name}s attack missed")
 
 
 class Player(Character):
     """
     main player of the game
     """
-    def __init__(self, name: str, max_health: int, inventory: dict={}) -> None:
+    def __init__(self, name: str, max_health: int, inventory: dict={}, money: int=0) -> None:
         super().__init__(name, max_health, inventory)
+        self.money = money
         self.healthbar = Healthbar(self)
         self.menu = Menu(self)
     
@@ -50,7 +51,7 @@ class Player(Character):
         self.shielded = True
         print(f"{self.name} braces for the upcoming attack")
     
-    def use_item(self, item, target): #self is the player, other is the attacker
+    def use_item(self, item, target): #self is the player, target is the enemy
         if item in self.inventory and self.inventory.get(item) > 0:
             if isinstance(item, itm.HealingItem):
                 item.use(self)
@@ -70,12 +71,16 @@ class Player(Character):
             print(f"{self.name} equipped {item.name}")
         else:
             print(f"{self.name} doesnt have {item.name}")
+    
+    def dodge(self): #TODO: add a dodge method that uses the vulnerable bool
+        pass
 
 
 class Enemy(Character):
     """
     basic enemy class
     """
-    def __init__(self, name: str, max_health: int, inventory: dict={}) -> None:
+    def __init__(self, name: str, max_health: int, inventory: dict={}, money_dropped_on_kill: int=0) -> None:
         super().__init__(name, max_health, inventory)
         self.healthbar = Healthbar(self)
+        self.money_dropped_on_kill = money_dropped_on_kill

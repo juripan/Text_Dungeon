@@ -6,11 +6,12 @@ import item_sheet as itm
 # not sure if the inventory should be defined here, maybe use names of items instead of the objects to lessen imports
 player = Player(name="Player", max_health=1000, 
                 inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1})
-enemy = Enemy(name="Ur mom", max_health=500)
+enemy1 = Enemy(name="Ur mom", max_health=500)
 
+enemies = [enemy1] # all attackable enemies are here
 
 while True:
-    player.menu.display_menu(player)
+    player.menu.display_battle_menu(enemies)
     """
     enemy.attack(player)
     if player.health < 800:
@@ -24,4 +25,4 @@ while True:
     #player.attack(enemy)
     """
     player.healthbar.display_health()
-    enemy.healthbar.display_health()
+    enemy1.healthbar.display_health()

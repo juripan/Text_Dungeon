@@ -44,7 +44,7 @@ class HealingItem(Item):
         print(f"{user.name} used {self.name}, +{self.heal_amount} health")
 
 
-class OffensiveItem(Item): #note: goes through armor on purpose
+class OffensiveItem(Item): #note: goes through armor on purpose, maybe make it deal damage to all enemies at once instead
     def __init__(self, name: str, cost: int, damage: int) -> None:
         super().__init__(name, cost)
         self.damage = damage
@@ -92,4 +92,4 @@ big_health = HealingItem(name="Big potion of healing", heal_amount=500, cost=Non
 
 bomb = OffensiveItem(name="Bomb", damage=80, cost=None)
 
-dynamite = OffensiveItem(name="stick of dynamite", damage=50, cost=None)
+dynamite = OffensiveItem(name="Stick of dynamite", damage=50, cost=None)
