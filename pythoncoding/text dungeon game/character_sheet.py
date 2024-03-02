@@ -18,9 +18,6 @@ class Character(): #TODO: add a stats attribute to Character class
         self.shielded: bool = False
         self.vulnerable: bool = True
         self.inventory = inventory
-    
-    def death(self): #TODO: implement dying, cuz everyone is invincible now
-        pass
 
     def attack(self, other):
         if other.vulnerable:
@@ -47,6 +44,7 @@ class Player(Character):
     def __init__(self, name: str, max_health: int, inventory: dict={}, money: int=0) -> None:
         super().__init__(name, max_health, inventory)
         self.money = money
+        self.run_success = False
         self.healthbar = Healthbar(self)
         self.menu = Menu(self)
     
@@ -55,16 +53,24 @@ class Player(Character):
         print(f"{self.name} braces for the upcoming attack")
     
     def dodge(self):
-        print(f"{self.name} attempts to dodge the upcoming attack")
-        roll = randint(0 ,6)
+        roll = randint(0 ,6) # placeholder odds
         if roll == 6:
             self.vulnerable = False
+        print(f"{self.name} attempts to dodge the upcoming attack")
     
     def use_item(self, item, target): #self is the player, target is the who its used on (you or the enemy)
         if item in self.inventory and self.inventory.get(item) > 0:
             item.use(self, target)
         else:
-            print(f"{self.name} ran out of {item.name}")       
+            print(f"{self.name} ran out of {item.name}")
+    
+    def run_from_battle(self):
+        roll = randint(0 ,6) # placeholder odds
+        if roll == 6:
+            self.run_success = True
+            print(f"{self.name} ran away successfully!")
+        else:
+            print(f"{self.name} tried run away but failed!")
 
 
 class Enemy(Character):
@@ -75,11 +81,16 @@ class Enemy(Character):
         super().__init__(name, max_health, inventory)
         self.healthbar = Healthbar(self)
         self.money_dropped_on_kill = money_dropped_on_kill
+    
+    def death(self, player, enemies):
+        enemies.remove(self)
+        player.money += self.money_dropped_on_kill
+        print(f"{self.name} died, {player.name} earned {self.money_dropped_on_kill} gold!")
 
 
 player = Player(name="Player", max_health=1000, 
                 inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1})
-enemy1 = Enemy(name="Ur mom", max_health=500)
-enemy2 = Enemy(name="Ur dad", max_health=700)
+enemy1 = Enemy(name="Ur mom", max_health=100, money_dropped_on_kill=20)
+enemy2 = Enemy(name="Ur dad", max_health=300, money_dropped_on_kill=40)
 
 enemies = [enemy1, enemy2] # all attackable enemies are here

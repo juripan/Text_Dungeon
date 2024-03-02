@@ -46,8 +46,8 @@ class Menu():
                 self.entity.use_item(item, target=aimed_at)
                 break
 
-    def run(self): #TODO: add run mechanics here
-        print("add a run function here")
+    def run(self):
+        self.entity.run_from_battle()
     
     def action(self, targets, choice):
         if choice == "attack" or choice == "1":
