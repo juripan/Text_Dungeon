@@ -1,4 +1,5 @@
 # menu class, gives the player control of their character
+# TODO: add a back out option and add a way of mitigating misspellings like a retry option
 
 class Menu():
     symbol_border: str = "-" 
@@ -62,7 +63,7 @@ class Menu():
     def display_battle_menu(self, targets):
         print("Enemies:")
         for i, target in enumerate(targets): # prints out every enemy thats in the fight
-            print(f"| {i+1}. {target.name}", end=" ")
+            print(f"| {i+1}. {target.name} (level {target.level})", end=" ")
         print("|") # just so it ends the list and adds a newline
         
         print("What would you like to do?")
