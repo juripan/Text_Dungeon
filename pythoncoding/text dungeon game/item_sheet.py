@@ -17,7 +17,7 @@ class Weapon(Item):
         self.damage_type = damage_type
         self.weapon_range = weapon_range
     
-    def use(self, user, target): # target isnt used cuz the user is the target automatically
+    def use(self, user, target): # target isnt used cuz the user is the target automatically, still defined so it doesnt raise an error
         user.weapon = self
         user.inventory[self] -= 1
         print(f"{user.name} equipped {self.name}")

@@ -2,7 +2,7 @@ from random import randint
 
 import item_sheet as itm
 from healthbar import Healthbar
-from menu import Menu
+from menu import BattleMenu
 
 class Character(): #TODO: add a stats attribute to Character class
     """
@@ -24,19 +24,18 @@ class Character(): #TODO: add a stats attribute to Character class
 
     def attack(self, other):
         if other.vulnerable:
+            attack_damage = int(self.weapon.damage * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
             if other.shielded:
-                attack_damage = int(self.weapon.damage * ((100 - other.shield.sturdiness * 15) / 100)) # if shield is up then lowers the damage
+                attack_damage = int(attack_damage * ((100 - other.shield.sturdiness * 15) / 100)) # if shield is up then lowers the damage
                 print(f"{other.name} blocked the attack!")
                 other.shielded = False # resets the shield
-            else:
-                attack_damage = int(self.weapon.damage * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
             
             other.health -= attack_damage
             other.health = max(other.health, 0) # a barrier so you dont go under 0
             other.healthbar.update()
             print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage!")
         else:
-            print(f"{self.name}s attack missed")
+            print(f"{self.name}s attack missed!")
             other.vulnerable = True
 
 
@@ -48,18 +47,18 @@ class Player(Character):
         super().__init__(name, max_health, level, inventory)
         self.money: int = money
         self.experience_points = experience_points
-        self.experience_cap = 100 # determies how much exp you need for a level up
+        self.experience_cap = 10 # determies how much exp you need for a level up
         self.level = level
         self.run_success: bool = False
         self.healthbar = Healthbar(self)
-        self.menu = Menu(self)
+        self.menu = BattleMenu(self)
     
     def block_attack(self):
         self.shielded = True
         print(f"{self.name} braces for the upcoming attack")
     
     def dodge(self):
-        roll = randint(0 ,6) # placeholder odds
+        roll = randint(0, 6) # placeholder odds
         if roll == 6:
             self.vulnerable = False
         print(f"{self.name} attempts to dodge the upcoming attack")
@@ -71,7 +70,7 @@ class Player(Character):
             print(f"{self.name} ran out of {item.name}")
     
     def run_from_battle(self):
-        roll = randint(0 ,6) # placeholder odds
+        roll = randint(0, 6) # placeholder odds
         if roll == 6:
             self.run_success = True
             print(f"{self.name} ran away successfully!")
@@ -82,7 +81,7 @@ class Player(Character):
         if self.experience_points >= self.experience_cap: # if you hit the amount of exp you need to level up
             self.experience_points -= self.experience_cap
             self.level += 1
-            self.experience_cap *= 9/8 # scales up the amout of exp you need to level up, can become a float
+            self.experience_cap = int(self.experience_cap * 9/8) # scales up the amout of exp you need to level up
             print(f"{self.name} reached level {self.level}!")
 
 

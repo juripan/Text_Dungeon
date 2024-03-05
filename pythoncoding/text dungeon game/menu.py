@@ -1,7 +1,7 @@
 # menu class, gives the player control of their character
 # TODO: add a back out option and add a way of mitigating misspellings like a retry option
 
-class Menu():
+class BattleMenu():
     symbol_border: str = "-" 
 
     def __init__(self, entity) -> None: # entity is the player
@@ -49,28 +49,28 @@ class Menu():
     def run(self):
         self.entity.run_from_battle()
     
-    def action(self, targets, choice):
+    def action(self, targets):
+        choice = input(">").lower()
         if choice == "attack" or choice == "1":
-            Menu.mini_attack_menu(self, targets)
+            BattleMenu.mini_attack_menu(self, targets)
         elif choice == "defend" or choice == "2":
-            Menu.mini_defend_menu(self)
+            BattleMenu.mini_defend_menu(self)
         elif choice == "item" or choice == "3":
-            Menu.mini_item_menu(self, targets)
+            BattleMenu.mini_item_menu(self, targets)
         elif choice == "run" or choice == "4":
-            Menu.run(self)
+            BattleMenu.run(self)
     
     def display_battle_menu(self, targets):
+        choices_display = "| Attack | Defend | Item | Run |"
         print("Enemies:")
         for i, target in enumerate(targets): # prints out every enemy thats in the fight
             print(f"| {i+1}. {target.name} (level {target.level})", end=" ")
         print("|") # just so it ends the list and adds a newline
         
         print("What would you like to do?")
-        choices_display = "| Attack | Defend | Item | Run |"
         print(self.symbol_border * len(choices_display))
         print(f"| {self.entity.name.ljust(len(choices_display)-3)}|") # string formatting to add spaces
         print(self.symbol_border * len(choices_display))
         print(choices_display)
         print(self.symbol_border * len(choices_display))
-        choice = input(">").lower()
-        Menu.action(self, targets, choice)
+        BattleMenu.action(self, targets)
