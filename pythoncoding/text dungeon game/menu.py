@@ -3,7 +3,6 @@
 
 class Menu():
     symbol_border: str = "-" 
-    width: int = 30
 
     def __init__(self, entity) -> None: # entity is the player
         self.entity = entity

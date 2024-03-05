@@ -40,7 +40,7 @@ class Character(): #TODO: add a stats attribute to Character class
             other.vulnerable = True
 
 
-class Player(Character): # leveling should set exp to 0, add 1 level and increase the exp threshold, it should trigger upon reaching a threshold of an x amount of exp
+class Player(Character):
     """
     main player of the game
     """
@@ -48,7 +48,8 @@ class Player(Character): # leveling should set exp to 0, add 1 level and increas
         super().__init__(name, max_health, level, inventory)
         self.money: int = money
         self.experience_points = experience_points
-        self.level = self.experience_points // 10 #TODO: this is a placeholder calculation for levels, make a proper one, see comment above
+        self.experience_cap = 100 # determies how much exp you need for a level up
+        self.level = level
         self.run_success: bool = False
         self.healthbar = Healthbar(self)
         self.menu = Menu(self)
@@ -76,6 +77,13 @@ class Player(Character): # leveling should set exp to 0, add 1 level and increas
             print(f"{self.name} ran away successfully!")
         else:
             print(f"{self.name} tried run away but failed!")
+    
+    def levelup_check(self):
+        if self.experience_points >= self.experience_cap: # if you hit the amount of exp you need to level up
+            self.experience_points -= self.experience_cap
+            self.level += 1
+            self.experience_cap *= 9/8 # scales up the amout of exp you need to level up, can become a float
+            print(f"{self.name} reached level {self.level}!")
 
 
 class Enemy(Character):
@@ -92,8 +100,8 @@ class Enemy(Character):
         enemies.remove(self)
         player.money += self.money_dropped_on_kill
         player.experience_points += self.exp_dropped_on_kill
-        player.level = player.experience_points // 10 #TODO: this is a placeholder calculation for levels, make a proper one
         print(f"{self.name} died, {player.name} earned {self.money_dropped_on_kill} gold and {self.exp_dropped_on_kill} experience!")
+        player.levelup_check()
 
 
 player = Player(name="Player", max_health=1000, 

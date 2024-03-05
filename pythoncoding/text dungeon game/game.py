@@ -20,5 +20,5 @@ while enemies and player.health > 0: # fight continues until enemies are dead or
         enemy.healthbar.display_health()
     player.healthbar.display_health() # shows healthbar of the player
 
-print(player.experience_points, player.level)
+print(player.experience_points, player.level, player.experience_cap)
 print("END OF BATTLE")
