@@ -4,7 +4,7 @@ import item_sheet as itm
 from healthbar import Healthbar
 from menu import BattleMenu
 
-class Character(): #TODO: add a stats attribute to Character class
+class Character(): #TODO: add a stats attribute to Character class based on its level
     """
     base character class, any living thing inherits this class
     """
