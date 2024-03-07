@@ -1,5 +1,5 @@
 # menu class, gives the player control of their character
-# TODO: add a back out option and add a way of mitigating misspellings like a retry option
+# TODO: add a back out option
 
 class BattleMenu():
     symbol_border: str = "-" 
@@ -8,28 +8,40 @@ class BattleMenu():
         self.entity = entity
     
     def mini_attack_menu(self, targets):
+        print(self.symbol_border * 30)
         print("who do you want to attack?")
+        print(self.symbol_border * 30)
         choice = input(">").lower() # you can either use the name of the enemy or their number in the listed thext to them in console
 
         for i, target in enumerate(targets):
             if choice == target.name.lower() or choice == str(i + 1):
                 self.entity.attack(target)
                 break
+        else: # if misspelled
+            print("not in the list of enemies")
+            BattleMenu.mini_attack_menu(self, targets)
     
     def mini_defend_menu(self):
+        print(self.symbol_border * 30)
         print(f"1. Shield with {self.entity.shield.name}")
         print("2. Dodge")
+        print(self.symbol_border * 30)
         choice = input(">").lower()
 
         if choice == "shield" or choice == "1":
             self.entity.block_attack()
         elif choice == "dodge" or choice == "2":
             self.entity.dodge()
+        else: # if misspelled
+            print("not in the commands list")
+            BattleMenu.mini_defend_menu(self)
 
     def mini_item_menu(self, targets):
+        print(self.symbol_border * 30)
         print("Use or equip item: ")
         for i, item in enumerate(self.entity.inventory):
             print(f"{i + 1}. {item.name}: {self.entity.inventory.get(item)}")
+        print(self.symbol_border * 30)
         choice = input(">").lower()
         print("on who?")
         choice2 = input(">").lower()
@@ -45,6 +57,9 @@ class BattleMenu():
             if choice == item.name.lower() or choice == str(i + 1):
                 self.entity.use_item(item, target=aimed_at)
                 break
+        else: # if not in the inv
+            print("not in the item list")
+            BattleMenu.mini_item_menu(self, targets)
 
     def run(self):
         self.entity.run_from_battle()
@@ -59,6 +74,9 @@ class BattleMenu():
             BattleMenu.mini_item_menu(self, targets)
         elif choice == "run" or choice == "4":
             BattleMenu.run(self)
+        else: # if wrong command
+            print("not in the commands list")
+            BattleMenu.action(self, targets)
     
     def display_battle_menu(self, targets):
         choices_display = "| Attack | Defend | Item | Run |"

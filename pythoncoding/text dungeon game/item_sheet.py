@@ -58,7 +58,7 @@ class HealingItem(Item):
         print(f"{user.name} used {self.name}, and healed {target.name} by {self.heal_amount} health")
 
 
-class OffensiveItem(Item): #note: goes through armor on purpose, maybe make it deal damage to all enemies at once instead
+class OffensiveItem(Item): #note: goes through armor on purpose,TODO: maybe make it deal damage to all enemies at once instead
     def __init__(self, name: str, cost: int, damage: int) -> None:
         super().__init__(name, cost)
         self.damage = damage
