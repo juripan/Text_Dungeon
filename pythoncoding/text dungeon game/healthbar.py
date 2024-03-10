@@ -14,8 +14,10 @@ class Healthbar:
     def update(self) -> None:
         self.current_value = self.entity.health
     
-    def display_health(self) -> None:
+    def display_health(self, name_display=True, end=None) -> None:
         remaining_bars = round(self.current_value / self.max_value * self.length)
         lost_bars = self.length - remaining_bars
-        print(f"{self.entity.name}s HP: {self.entity.health}/{self.entity.max_health}")
+        if name_display:
+            print(f"{self.entity.name}s ", end="")
+        print(f"HP: {self.entity.health}/{self.entity.max_health}")
         print(f"{self.symbol_border}{self.symbol_remaining * remaining_bars}{self.symbol_lost * lost_bars}{self.symbol_border}")

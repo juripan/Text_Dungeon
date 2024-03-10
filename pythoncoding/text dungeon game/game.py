@@ -15,10 +15,6 @@ def main():
         
         for enemy in enemies: # all enemies have a turn (attack)
             enemy.attack(player)
-        
-        for enemy in enemies: # shows healthbars of every enemy
-            enemy.healthbar.display_health()
-        player.healthbar.display_health() # shows healthbar of the player
 
     print(f"your current exp: {player.experience_points}, current level: {player.level}, how much exp you need to get for new level: {player.experience_cap}")
     print("END OF BATTLE")
