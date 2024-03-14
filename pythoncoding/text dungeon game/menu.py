@@ -1,5 +1,4 @@
 # menu class, gives the player control of their character
-# TODO: add a back out option
 
 class BattleMenu():
     symbol_border: str = "-"

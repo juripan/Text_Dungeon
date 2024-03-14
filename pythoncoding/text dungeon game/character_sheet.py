@@ -4,7 +4,7 @@ import item_sheet as itm
 from healthbar import Healthbar
 from menu import BattleMenu
 
-class Character(): #TODO: add a stats attribute to Character class based on its level
+class Character():
     """
     base character class, any living thing inherits this class
     """
@@ -13,6 +13,7 @@ class Character(): #TODO: add a stats attribute to Character class based on its 
         self.max_health = max_health
         self.health = max_health
         self.level = level
+        self.stats: dict = {"strength": 1, "dexterity": 1, "agility": 1} #TODO: come up with other stats and add away to get more stats after level up
 
         self.weapon = itm.fists
         self.armor = itm.no_armor
@@ -59,7 +60,7 @@ class Player(Character):
     
     def dodge(self):
         roll = randint(0, 6) # placeholder odds
-        if roll == 6:
+        if roll == 0:
             self.vulnerable = False
         print(f"{self.name} attempts to dodge the upcoming attack")
     
@@ -70,8 +71,8 @@ class Player(Character):
             print(f"{self.name} ran out of {item.name}")
     
     def run_from_battle(self):
-        roll = randint(0, 6) # placeholder odds
-        if roll == 6:
+        roll = randint(0, int(12/self.stats["agility"])) #TODO: maybe change the odds in some way, maybe it could add to the rolled number and then check if its over a threshold in the if statement, or just lower the threshold, also make it scale with enemy level
+        if roll == 0:
             self.run_success = True
             print(f"{self.name} ran away successfully!")
         else:
