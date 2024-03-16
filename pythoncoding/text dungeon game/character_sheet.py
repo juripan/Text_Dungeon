@@ -70,9 +70,12 @@ class Player(Character):
         else:
             print(f"{self.name} ran out of {item.name}")
     
-    def run_from_battle(self):
-        roll = randint(0, int(12/self.stats["agility"])) #TODO: maybe change the odds in some way, maybe it could add to the rolled number and then check if its over a threshold in the if statement, or just lower the threshold, also make it scale with enemy level
-        if roll == 0:
+    def run_from_battle(self, targets):
+        threshold: int = 25
+        sum_target_level: int = 0
+        for target in targets: sum_target_level += target.level
+        roll = randint(0 - sum_target_level, 30) # makes it less likely to run depending on the enemy levels maybe make it into an average level not a sum
+        if roll > (threshold - self.stats["agility"] + 1): # + 1 to make base agility not do anything (base is 1)
             self.run_success = True
             print(f"{self.name} ran away successfully!")
         else:

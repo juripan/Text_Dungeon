@@ -104,8 +104,8 @@ class BattleMenu():
             print("not in the item list")
             BattleMenu.mini_item_menu(self, targets)
 
-    def run(self):
-        self.entity.run_from_battle()
+    def run(self, targets):
+        self.entity.run_from_battle(targets)
     
     def action(self, targets):
         choice = input(">").lower()
@@ -116,7 +116,7 @@ class BattleMenu():
         elif choice == "item" or choice == "3":
             BattleMenu.mini_item_menu(self, targets)
         elif choice == "run" or choice == "4":
-            BattleMenu.run(self)
+            BattleMenu.run(self, targets)
         elif choice == "help":
             BattleMenu.help(self, targets)
         else: # if wrong command
