@@ -1,7 +1,7 @@
 # menu class, gives the player control of their character
 
 class BattleMenu():
-    symbol_border: str = "-"
+    symbol_border: str = "─"
     default_width: int = 50
 
     def __init__(self, entity) -> None: # entity is the player
@@ -42,7 +42,6 @@ class BattleMenu():
     def mini_attack_menu(self, targets):
         print(self.symbol_border * self.default_width)
         print("who do you want to attack?")
-        print(self.symbol_border * self.default_width)
         choice = input(">").lower() # you can either use the name of the enemy or their number in the listed thext to them in console
 
         if choice == "back" or choice == "..": # if you want to go back to the original menu
@@ -62,6 +61,7 @@ class BattleMenu():
         print(f"1. Shield with {self.entity.shield.name}")
         print("2. Dodge")
         print(self.symbol_border * self.default_width)
+        print("What do you want to do?")
         choice = input(">").lower()
 
         if choice == "shield" or choice == "1":
@@ -76,16 +76,21 @@ class BattleMenu():
             BattleMenu.mini_defend_menu(self)
 
     def mini_item_menu(self, targets):
+        # displays every item in inventory
         print(self.symbol_border * self.default_width)
-        print("Use or equip item: ")
         for i, item in enumerate(self.entity.inventory):
             print(f"{i + 1}. {item.name}: {self.entity.inventory.get(item)}")
         print(self.symbol_border * self.default_width)
+        
+        print("Use or equip item: ")
         choice = input(">").lower()
+        if choice == "back" or choice == "..":
+            BattleMenu.display_battle_menu(self, targets)
+            return # halts the current function
+        
         print("use on who?")
         choice2 = input(">").lower()
-
-        if choice == "back" or choice == ".." or choice2 == "back" or choice2 == "..": # if you want to go back to the original menu
+        if choice2 == "back" or choice2 == "..": # if you want to go back to the original menu
             BattleMenu.display_battle_menu(self, targets)
             return # halts the current function 
 
@@ -129,17 +134,16 @@ class BattleMenu():
         print(self.symbol_border * self.default_width)
         self.entity.healthbar.display_health() # player health
         
-        choices_display = "| Attack | Defend | Item | Run |"
+        choices_display = "│ Attack │ Defend │ Item │ Run │"
 
         print("Enemies:")
         for i, target in enumerate(targets): # prints out every enemy thats in the fight
-            print(f"| {i+1}. {target.name} (level {target.level})", end=" ")
+            print(f"│ {i+1}. {target.name} (level {target.level})", end=" ")
             target.healthbar.display_health(name_display=False, end=" ")
         
-        print("What would you like to do?")
-        print(f"+{self.symbol_border * (len(choices_display) - 2)}+")
-        print(f"| {self.entity.name.ljust(len(choices_display)-3)}|") # string formatting to add spaces
-        print(f"+{self.symbol_border * (len(choices_display) - 2)}+")
+        print(f"┌{self.symbol_border * (len(choices_display) - 2)}┐")
+        print(f"│ {self.entity.name.ljust(len(choices_display)-3)}│") # string formatting to add spaces
+        print(f"├{self.symbol_border * (len(choices_display) - 2)}┤")
         print(choices_display)
-        print(f"+{self.symbol_border * (len(choices_display) - 2)}+")
+        print(f"└{self.symbol_border * (len(choices_display) - 2)}┘")
         BattleMenu.action(self, targets)

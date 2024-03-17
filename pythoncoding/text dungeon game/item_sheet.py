@@ -50,7 +50,7 @@ class HealingItem(Item):
         super().__init__(name, cost)
         self.heal_amount = heal_amount
     
-    def use(self, user, target):
+    def use(self, user, target): # you can heal anyone and I mean ANYONE, even an enemy
         target.health += self.heal_amount
         target.health = min(target.health, target.max_health) # a barrier so you dont go over max health
         user.inventory[self] -= 1
@@ -58,7 +58,7 @@ class HealingItem(Item):
         print(f"{user.name} used {self.name}, and healed {target.name} by {self.heal_amount} health")
 
 
-class OffensiveItem(Item): #note: goes through armor on purpose,TODO: maybe make it deal damage to all enemies at once instead
+class OffensiveItem(Item): # goes through armor on purpose, TODO: maybe make it deal damage to all enemies at once instead
     def __init__(self, name: str, cost: int, damage: int) -> None:
         super().__init__(name, cost)
         self.damage = damage

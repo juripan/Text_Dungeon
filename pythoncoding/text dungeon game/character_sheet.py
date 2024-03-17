@@ -13,7 +13,7 @@ class Character():
         self.max_health = max_health
         self.health = max_health
         self.level = level
-        self.stats: dict = {"strength": 1, "dexterity": 1, "agility": 1} #TODO: come up with other stats and add away to get more stats after level up
+        self.stats: dict = {"strength": 1, "dexterity": 1, "agility": 1, "luck": 1} #TODO: come up with other stats and add away to get more stats after level up
 
         self.weapon = itm.fists
         self.armor = itm.no_armor
@@ -23,7 +23,7 @@ class Character():
         self.shielded: bool = False
         self.vulnerable: bool = True
 
-    def attack(self, other):
+    def attack(self, other): #TODO: add critical hits (based on luck stat)
         if other.vulnerable:
             attack_damage = int(self.weapon.damage * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
             if other.shielded:
@@ -89,7 +89,7 @@ class Player(Character):
             print(f"{self.name} reached level {self.level}!")
 
 
-class Enemy(Character):
+class Enemy(Character): #TODO: add magic / spells to the enemy
     """
     basic enemy class
     """

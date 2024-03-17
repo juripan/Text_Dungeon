@@ -1,9 +1,9 @@
 # class that draws and updates the healthbar of any Character
 
 class Healthbar:
-    symbol_remaining: str = "■"
+    symbol_remaining: str = "█"
     symbol_lost: str = "-"
-    symbol_border: str = "|"
+    symbol_border: str = "│"
 
     def __init__(self, entity, length: int = 20) -> None:
         self.entity = entity
