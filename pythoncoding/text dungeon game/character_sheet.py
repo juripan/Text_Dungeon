@@ -13,6 +13,7 @@ class Character():
         self.max_health = max_health
         self.health = max_health
         self.level = level
+        # max possible stat valuse should be 20
         self.stats: dict = {"strength": 1, "dexterity": 1, "agility": 1, "luck": 1} #TODO: come up with other stats and add away to get more stats after level up
 
         self.weapon = itm.fists
@@ -23,18 +24,25 @@ class Character():
         self.shielded: bool = False
         self.vulnerable: bool = True
 
-    def attack(self, other): #TODO: add critical hits (based on luck stat)
+    def attack(self, other):
         if other.vulnerable:
-            attack_damage = int(self.weapon.damage * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
-            if other.shielded:
-                attack_damage = int(attack_damage * ((100 - other.shield.sturdiness * 15) / 100)) # if shield is up then lowers the damage
-                print(f"{other.name} blocked the attack!")
-                other.shielded = False # resets the shield
+            added_message = "!"
+            roll = randint(1, 100 - 5 * self.stats["luck"] + 1) # max luck stat is 20, 21 throws an error
+            if roll == 1: # critical hit, ignores armor and shielding
+                attack_damage = self.weapon.damage * 3
+                added_message = ", critical hit!"
+            
+            else:
+                attack_damage = int(self.weapon.damage * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
+                if other.shielded:
+                    attack_damage = int(attack_damage * ((100 - other.shield.sturdiness * 15) / 100)) # if shield is up then lowers the damage
+                    print(f"{other.name} blocked the attack!")
+                    other.shielded = False # resets the shield, TODO: should be reset at start of new turn not here, currently only blocks the first attack
             
             other.health -= attack_damage
             other.health = max(other.health, 0) # a barrier so you dont go under 0
             other.healthbar.update()
-            print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage!")
+            print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage" + added_message)
         else:
             print(f"{self.name}s attack missed!")
             other.vulnerable = True
@@ -59,8 +67,8 @@ class Player(Character):
         print(f"{self.name} braces for the upcoming attack")
     
     def dodge(self):
-        roll = randint(0, 6) # placeholder odds
-        if roll == 0:
+        roll = randint(1, 40 - 2 * self.stats["agility"] + 1) #TODO: should probably dodge any attack in that turn
+        if roll == 1:
             self.vulnerable = False
         print(f"{self.name} attempts to dodge the upcoming attack")
     
@@ -81,7 +89,7 @@ class Player(Character):
         else:
             print(f"{self.name} tried run away but failed!")
     
-    def levelup_check(self):
+    def levelup_check(self): #TODO: move this to the Menu class
         if self.experience_points >= self.experience_cap: # if you hit the amount of exp you need to level up
             self.experience_points -= self.experience_cap
             self.level += 1
