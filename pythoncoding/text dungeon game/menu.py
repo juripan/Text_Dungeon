@@ -45,8 +45,7 @@ class BattleMenu():
         choice = input(">").lower() # you can either use the name of the enemy or their number in the listed thext to them in console
 
         if choice == "back" or choice == "..": # if you want to go back to the original menu
-            BattleMenu.display_battle_menu(self, targets)
-            return # halts the current function 
+            return BattleMenu.display_battle_menu(self, targets)
 
         for i, target in enumerate(targets):
             if choice == target.name.lower() or choice == str(i + 1):
@@ -69,8 +68,7 @@ class BattleMenu():
         elif choice == "dodge" or choice == "2":
             self.entity.dodge()
         elif choice == "back" or choice == "..": # goes back to the original menu
-            BattleMenu.display_battle_menu(self, targets)
-            return # halts the current function
+            return BattleMenu.display_battle_menu(self, targets)
         else: # if misspelled
             print("not in the commands list")
             BattleMenu.mini_defend_menu(self)
@@ -85,14 +83,12 @@ class BattleMenu():
         print("Use or equip item: ")
         choice = input(">").lower()
         if choice == "back" or choice == "..":
-            BattleMenu.display_battle_menu(self, targets)
-            return # halts the current function
+            return BattleMenu.display_battle_menu(self, targets)
         
         print("use on who?")
         choice2 = input(">").lower()
         if choice2 == "back" or choice2 == "..": # if you want to go back to the original menu
-            BattleMenu.display_battle_menu(self, targets)
-            return # halts the current function 
+            return BattleMenu.display_battle_menu(self, targets)
 
         for i, target in enumerate(targets):
             if target.name.lower() == choice2 or choice2 == str(i + 1):

@@ -13,8 +13,8 @@ class Character():
         self.max_health = max_health
         self.health = max_health
         self.level = level
-        # max possible stat valuse should be 20
-        self.stats: dict = {"strength": 1, "dexterity": 1, "agility": 1, "luck": 1} #TODO: come up with other stats and add away to get more stats after level up
+        # max possible stat value should be 20
+        self.stats: dict = {"strength": 1, "dexterity": 1, "agility": 1, "luck": 1} #TODO: come up with other stats
 
         self.weapon = itm.fists
         self.armor = itm.no_armor
@@ -88,13 +88,6 @@ class Player(Character):
             print(f"{self.name} ran away successfully!")
         else:
             print(f"{self.name} tried run away but failed!")
-    
-    def levelup_check(self): #TODO: move this to the Menu class
-        if self.experience_points >= self.experience_cap: # if you hit the amount of exp you need to level up
-            self.experience_points -= self.experience_cap
-            self.level += 1
-            self.experience_cap = int(self.experience_cap * 9/8) # scales up the amout of exp you need to level up
-            print(f"{self.name} reached level {self.level}!")
 
 
 class Enemy(Character): #TODO: add magic / spells to the enemy
@@ -112,7 +105,6 @@ class Enemy(Character): #TODO: add magic / spells to the enemy
         player.money += self.money_dropped_on_kill
         player.experience_points += self.exp_dropped_on_kill
         print(f"{self.name} died, {player.name} earned {self.money_dropped_on_kill} gold and {self.exp_dropped_on_kill} experience!")
-        player.levelup_check()
 
 
 player = Player(name="Player", max_health=1000, 
