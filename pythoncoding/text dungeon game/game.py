@@ -12,6 +12,11 @@ class Battle: #TODO: add enemy behavior here (AI)
         self.enemies = enemies
         self.initial_player_level = player.level
     
+    def turn_resets(self):
+        #resets blocking and dodging bools back to their original state
+        self.player.vulnerable = True
+        self.player.shielded = False
+
     def levelup_check(self):
         # if you hit the amount of exp you need to level up
         # keeps leveling up until your exp is less than the exp cap
@@ -60,6 +65,8 @@ class Battle: #TODO: add enemy behavior here (AI)
             for enemy in enemies: # all enemies have a turn (attack)
                 enemy.attack(player)
             
+            Battle.turn_resets(self)
+
             Battle.levelup_check(self) # checks if the player leveled up
         
         if self.player.health != 0:

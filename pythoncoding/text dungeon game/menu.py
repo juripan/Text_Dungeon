@@ -71,7 +71,7 @@ class BattleMenu():
             return BattleMenu.display_battle_menu(self, targets)
         else: # if misspelled
             print("not in the commands list")
-            BattleMenu.mini_defend_menu(self)
+            BattleMenu.mini_defend_menu(self, targets)
 
     def mini_item_menu(self, targets):
         # displays every item in inventory

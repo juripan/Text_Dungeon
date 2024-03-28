@@ -48,7 +48,6 @@ class Character():
                 if other.shielded:
                     attack_damage = int(attack_damage * ((100 - other.shield.sturdiness * 15) / 100)) # if shield is up then lowers the damage
                     print(f"{other.name} blocked the attack!")
-                    other.shielded = False # resets the shield, TODO: should be reset at start of new turn not here, currently only blocks the first attack
             
             other.health -= attack_damage
             other.health = max(other.health, 0) # a barrier so you dont go under 0
@@ -56,7 +55,6 @@ class Character():
             print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage" + added_message)
         else:
             print(f"{self.name}s attack missed!")
-            other.vulnerable = True
 
 
 class Player(Character):
@@ -79,7 +77,7 @@ class Player(Character):
         print(f"{self.name} braces for the upcoming attack")
     
     def dodge(self):
-        roll = randint(1, 40 - 2 * self.stats["agility"] + 1) #TODO: should probably dodge any attack in that turn
+        roll = randint(1, 40 - 2 * self.stats["agility"] + 1)
         if roll == 1:
             self.vulnerable = False
         print(f"{self.name} attempts to dodge the upcoming attack")
@@ -94,7 +92,7 @@ class Player(Character):
         threshold: int = 25
         sum_target_level: int = 0
         for target in targets: sum_target_level += target.level
-        roll = randint(0 - sum_target_level, 30) # makes it less likely to run depending on the enemy levels maybe make it into an average level not a sum
+        roll = randint(0 - sum_target_level, 30) # maybe make it into an average level not a sum
         if roll > (threshold - self.stats["agility"] + 1): # + 1 to make base agility not do anything (base is 1)
             self.run_success = True
             print(f"{self.name} ran away successfully!")
