@@ -34,25 +34,37 @@ class Character():
 
         self.shielded: bool = False
         self.vulnerable: bool = True
-
-    def attack(self, other):
+    
+    def attack_calc(self, other):
+        added_message = "!"
+        roll = randint(1, 100 - 5 * self.stats["luck"] + 1) # max luck stat is 20, 21 throws an error
+        if roll == 1: # critical hit, ignores armor and shielding
+            attack_damage = self.weapon.damage * 3
+            added_message = ", critical hit!"
+        else:
+            attack_damage = int(self.weapon.damage * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
+            if other.shielded:
+                attack_damage = int(attack_damage * ((100 - other.shield.sturdiness * 15) / 100)) # if shield is up then lowers the damage
+                print(f"{other.name} blocked the attack!")
+                 
+        other.health -= attack_damage
+        other.health = max(other.health, 0) # a barrier so you dont go under 0
+        other.healthbar.update_health()
+        print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage" + added_message)
+    
+    def attack(self, other): #TODO: very messy, organize this
         if other.vulnerable:
-            added_message = "!"
-            roll = randint(1, 100 - 5 * self.stats["luck"] + 1) # max luck stat is 20, 21 throws an error
-            if roll == 1: # critical hit, ignores armor and shielding
-                attack_damage = self.weapon.damage * 3
-                added_message = ", critical hit!"
-            
+            if isinstance(self.weapon, itm.RangedWeapon):
+                for item in self.inventory:
+                    if isinstance(item, itm.Ammo) and self.inventory[item] > 0:
+                        attack_buff = item.use(self, self.weapon) # loads the weapon and returns the damage buff
+                        Character.attack_calc(self, other)
+                        self.weapon.damage -= attack_buff # resets the damage after attacking
+                        break
+                else:
+                    print(f"{self.name} ran out of ammo!")
             else:
-                attack_damage = int(self.weapon.damage * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
-                if other.shielded:
-                    attack_damage = int(attack_damage * ((100 - other.shield.sturdiness * 15) / 100)) # if shield is up then lowers the damage
-                    print(f"{other.name} blocked the attack!")
-            
-            other.health -= attack_damage
-            other.health = max(other.health, 0) # a barrier so you dont go under 0
-            other.healthbar.update_health()
-            print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage" + added_message)
+                Character.attack_calc(self, other) # closer range attack
         else:
             print(f"{self.name}s attack missed!")
 
@@ -120,7 +132,7 @@ class Enemy(Character): #TODO: add magic / spells to the enemy and add more enem
 
 
 player = Player(name="Player", max_health=1000, 
-                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1}, 
+                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1, itm.bow: 1, itm.wooden_arrow: 5, itm.leather_armor: 1}, 
                 stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
 enemy1 = Enemy(name="Ur mom", max_health=100, level=2, money_dropped_on_kill=20, exp_dropped_on_kill=20, 
                stats = {"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
