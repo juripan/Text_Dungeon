@@ -18,11 +18,11 @@ class Battle: #TODO: add enemy behavior here (AI)
         while self.player.experience_points >= self.player.experience_cap:
             self.player.experience_points -= self.player.experience_cap
             self.player.level += 1
-            self.player.experience_cap = int(self.player.experience_cap * 9/8) # scales up the amout of exp you need to level up
+            self.player.experience_cap = int(self.player.experience_cap * 9/8) # increases the amount of exp you need to level up
             print(f"{self.player.name} reached level {self.player.level}!")
     
-    def level_up(self, level_up_points): #TODO: it should probably up your HP aswell
-        # gives you a chance to add to your stats after the battle is over and you got some levels
+    def level_up(self, level_up_points):
+        # gives you a chance to add to your stats after the battle is over and if you got some levels
         for i in range(level_up_points):
             print("--------------------------------------")
             print("choose a stat to level up")
@@ -36,9 +36,12 @@ class Battle: #TODO: add enemy behavior here (AI)
                     self.player.stats[stat] += 1
                     level_up_points -= 1
                     print(f"You leveled up {stat}!")
+
+                    if stat == "vigor": # raises your hp for every vigor point you added
+                        self.player.max_health += int(self.player.max_health * (20/100))
                     break
             else:
-                print("this stat doesnt exist / or is too high")
+                print("this stat doesnt exist / is too high")
                 return Battle.level_up(self, level_up_points)
 
     
@@ -59,8 +62,9 @@ class Battle: #TODO: add enemy behavior here (AI)
             
             Battle.levelup_check(self) # checks if the player leveled up
         
-        level_up_points = self.player.level - self.initial_player_level # sets how many levels you leveled up by durng the battle
-        Battle.level_up(self,level_up_points)
+        if self.player.health != 0:
+            level_up_points = self.player.level - self.initial_player_level # sets how many levels you leveled up by durng the battle
+            Battle.level_up(self,level_up_points)
         
         print(self.player.stats)
         print(f"your current exp: {player.experience_points}, current level: {player.level}, how much exp you need to get for new level: {player.experience_cap}")

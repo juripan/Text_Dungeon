@@ -54,7 +54,7 @@ class HealingItem(Item):
         target.health += self.heal_amount
         target.health = min(target.health, target.max_health) # a barrier so you dont go over max health
         user.inventory[self] -= 1
-        target.healthbar.update()
+        target.healthbar.update_health()
         print(f"{user.name} used {self.name}, and healed {target.name} by {self.heal_amount} health")
 
 
@@ -67,7 +67,7 @@ class OffensiveItem(Item): # goes through armor on purpose, TODO: maybe make it 
         target.health -= self.damage
         target.health = max(target.health, 0) # a barrier so you dont go under 0
         user.inventory[self] -= 1
-        target.healthbar.update()
+        target.healthbar.update_health()
         print(f"{user.name} used {self.name}, and dealt {self.damage} damage to {target.name}")
 
 

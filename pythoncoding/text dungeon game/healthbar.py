@@ -11,7 +11,7 @@ class Healthbar:
         self.max_value = entity.max_health
         self.current_value = entity.health
     
-    def update(self) -> None:
+    def update_health(self) -> None:
         self.current_value = self.entity.health
     
     def display_health(self, name_display=True, end=None) -> None:

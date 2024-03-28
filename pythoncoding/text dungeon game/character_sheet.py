@@ -7,14 +7,25 @@ from menu import BattleMenu
 class Character():
     """
     base character class, any living thing inherits this class
+
+    stats (max value is 20 for every stat)
+    strength - makes meelee weapons do more damage TODO
+    dexterity - makes long ranged weapons deal more damage TODO
+    vigor - raises max hp of character
+    agility - run and dodge chances
+    luck - crit chances
     """
-    def __init__(self, name: str, max_health: int, level: int=0, inventory: dict={}) -> None:
+    def __init__(self, name: str, max_health: int, level: int=0, inventory: dict={}, 
+                 stats: dict={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}) -> None:
         self.name = name
         self.max_health = max_health
         self.health = max_health
         self.level = level
-        # max possible stat value should be 20
-        self.stats: dict = {"strength": 1, "dexterity": 1, "agility": 1, "luck": 1} #TODO: come up with other stats
+        self.stats = stats
+
+        for i in range(self.stats["vigor"] - 1): # initializes the max health and health based on the initial vigor stat
+            self.max_health += int(self.max_health * (20/100))
+            self.health = self.max_health
 
         self.weapon = itm.fists
         self.armor = itm.no_armor
@@ -41,7 +52,7 @@ class Character():
             
             other.health -= attack_damage
             other.health = max(other.health, 0) # a barrier so you dont go under 0
-            other.healthbar.update()
+            other.healthbar.update_health()
             print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage" + added_message)
         else:
             print(f"{self.name}s attack missed!")
@@ -52,8 +63,9 @@ class Player(Character):
     """
     main player of the game
     """
-    def __init__(self, name: str, max_health: int, experience_points: int=0, level: int=0, inventory: dict={}, money: int=0) -> None:
-        super().__init__(name, max_health, level, inventory)
+    def __init__(self, name: str, max_health: int, experience_points: int=0, level: int=0, inventory: dict={}, 
+                 stats: dict={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}, money: int=0) -> None:
+        super().__init__(name, max_health, level, inventory, stats)
         self.money: int = money
         self.experience_points = experience_points
         self.experience_cap = 10 # determies how much exp you need for a level up
@@ -90,12 +102,14 @@ class Player(Character):
             print(f"{self.name} tried run away but failed!")
 
 
-class Enemy(Character): #TODO: add magic / spells to the enemy
+class Enemy(Character): #TODO: add magic / spells to the enemy and add more enemy variants (subclasses)
     """
     basic enemy class
     """
-    def __init__(self, name: str, max_health: int, level: int=0, inventory: dict={}, money_dropped_on_kill: int=0, exp_dropped_on_kill: int=0) -> None:
-        super().__init__(name, max_health, level, inventory)
+    def __init__(self, name: str, max_health: int, level: int=0, inventory: dict={}, 
+                 stats: dict={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1},
+                 money_dropped_on_kill: int=0, exp_dropped_on_kill: int=0) -> None:
+        super().__init__(name, max_health, level, inventory, stats)
         self.healthbar = Healthbar(self)
         self.money_dropped_on_kill = money_dropped_on_kill
         self.exp_dropped_on_kill = exp_dropped_on_kill
@@ -108,8 +122,11 @@ class Enemy(Character): #TODO: add magic / spells to the enemy
 
 
 player = Player(name="Player", max_health=1000, 
-                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1})
-enemy1 = Enemy(name="Ur mom", max_health=100, level=2, money_dropped_on_kill=20, exp_dropped_on_kill=20)
-enemy2 = Enemy(name="Ur dad", max_health=300, level=4, money_dropped_on_kill=40, exp_dropped_on_kill=50)
+                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1}, 
+                stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
+enemy1 = Enemy(name="Ur mom", max_health=100, level=2, money_dropped_on_kill=20, exp_dropped_on_kill=20, 
+               stats = {"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
+enemy2 = Enemy(name="Ur dad", max_health=300, level=4, money_dropped_on_kill=40, exp_dropped_on_kill=40,
+               stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
 
 enemies = [enemy1, enemy2] # all attackable enemies are here
