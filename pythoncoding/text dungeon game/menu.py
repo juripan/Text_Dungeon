@@ -30,7 +30,7 @@ class BattleMenu():
         
         Item menu:
         1st input:
-        *name of the item or its order number* - determines the item you equip/use
+        *name of the item or its order number* - determines the item you equip/use (if its equipped already then its going to get unequipped)
         'back' or '..' - goes back to the previous menu
         2nd input(use on who?):
         *name of the enemy or their order number* - determines the target you use the item on (equip or heasl items automatically target you)
@@ -80,7 +80,7 @@ class BattleMenu():
             print(f"{i + 1}. {item.name}: {self.entity.inventory.get(item)}")
         print(self.symbol_border * self.default_width)
         
-        print("Use or equip item: ")
+        print("Use or equip/unequip item: ")
         choice = input(">").lower()
         if choice == "back" or choice == "..":
             return BattleMenu.display_battle_menu(self, targets)

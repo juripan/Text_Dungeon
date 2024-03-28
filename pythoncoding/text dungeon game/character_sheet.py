@@ -55,16 +55,16 @@ class Character():
     def attack(self, other): #TODO: very messy, organize this
         if other.vulnerable:
             if isinstance(self.weapon, itm.RangedWeapon):
-                for item in self.inventory:
+                for item in self.inventory: # attempts to find the ammo for the weapon
                     if isinstance(item, itm.Ammo) and self.inventory[item] > 0:
-                        attack_buff = item.use(self, self.weapon) # loads the weapon and returns the damage buff
+                        item.use(self, self.weapon) # loads the weapon
                         Character.attack_calc(self, other)
-                        self.weapon.damage -= attack_buff # resets the damage after attacking
                         break
                 else:
                     print(f"{self.name} ran out of ammo!")
+                    self.weapon.loaded = False
             else:
-                Character.attack_calc(self, other) # closer range attack
+                Character.attack_calc(self, other) # close range attack
         else:
             print(f"{self.name}s attack missed!")
 
@@ -95,11 +95,11 @@ class Player(Character):
         print(f"{self.name} attempts to dodge the upcoming attack")
     
     def use_item(self, item, target): #self is the player, target is the who its used on (you or the enemy)
-        if item in self.inventory and self.inventory.get(item) > 0:
+        if not isinstance(item, itm.Ammo): # checks of the item is usable
             item.use(self, target)
         else:
-            print(f"{self.name} ran out of {item.name}")
-    
+            print("You cannot use this item")
+
     def run_from_battle(self, targets):
         threshold: int = 25
         sum_target_level: int = 0
@@ -132,7 +132,7 @@ class Enemy(Character): #TODO: add magic / spells to the enemy and add more enem
 
 
 player = Player(name="Player", max_health=1000, 
-                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1, itm.bow: 1, itm.wooden_arrow: 5, itm.leather_armor: 1}, 
+                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1, itm.bow: 1, itm.wooden_arrow: 5, itm.leather_armor: 1, itm.flit_arrow: 3}, 
                 stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
 enemy1 = Enemy(name="Ur mom", max_health=100, level=2, money_dropped_on_kill=20, exp_dropped_on_kill=20, 
                stats = {"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})

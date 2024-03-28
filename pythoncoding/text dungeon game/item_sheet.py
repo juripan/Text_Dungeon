@@ -17,6 +17,12 @@ class Weapon(Item):
         self.damage_type = damage_type
     
     def use(self, user, target): # target isnt used cuz the user is the target automatically, still defined so it doesnt raise an error
+        if user.weapon == self: # if you already have it equipped it unequips the item
+            print(f"{user.name} unequipped {user.weapon.name}")
+            user.inventory[user.weapon] += 1
+            user.weapon = fists
+            return
+        
         if user.weapon in user.inventory:
             user.inventory[user.weapon] += 1 # puts the weapon back into the inventory
         user.weapon = self
@@ -28,8 +34,15 @@ class RangedWeapon(Weapon):
     def __init__(self, name: str, damage: int, damage_type: str, weapon_range: str, cost: int) -> None:
         super().__init__(name, damage, damage_type, cost)
         self.weapon_range = weapon_range
+        self.loaded = False # default False, saves the type of ammo that is loaded into the weapon
     
     def use(self, user, target): # target isnt used cuz the user is the target automatically, still defined so it doesnt raise an error
+        if user.weapon == self: # if you already have it equipped it unequips the item
+            print(f"{user.name} unequipped {user.weapon.name}")
+            user.inventory[user.weapon] += 1
+            user.weapon = fists
+            return
+
         if user.weapon in user.inventory:
             user.inventory[user.weapon] += 1 # puts the weapon back into the inventory
         user.weapon = self
@@ -43,6 +56,12 @@ class Armor(Item):
         self.resistance = resistance
     
     def use(self, user, target): # target isnt used cuz the user is the target automatically
+        if user.armor == self: # if you already have it equipped it unequips the item
+            print(f"{user.name} unequipped {user.armor.name}")
+            user.inventory[user.armor] += 1
+            user.armor = no_armor
+            return
+
         if user.armor in user.inventory:
             user.inventory[user.armor] += 1 # puts the item back into the inventory
         user.armor = self
@@ -56,6 +75,12 @@ class Shield(Item):
         self.sturdiness = sturdiness
     
     def use(self, user, target): # target isnt used cuz the user is the target automatically
+        if user.shield == self: # if you already have it equipped it unequips the item
+            print(f"{user.name} unequipped {user.shield.name}")
+            user.inventory[user.shield] += 1
+            user.shield = no_shield
+            return
+
         if user.shield in user.inventory:
             user.inventory[user.shield] += 1 # puts the weapon back into the inventory
         user.shield = self
@@ -69,11 +94,14 @@ class HealingItem(Item):
         self.heal_amount = heal_amount
     
     def use(self, user, target): # you can heal anyone and I mean ANYONE, even an enemy
-        target.health += self.heal_amount
-        target.health = min(target.health, target.max_health) # a barrier so you dont go over max health
-        user.inventory[self] -= 1
-        target.healthbar.update_health()
-        print(f"{user.name} used {self.name}, and healed {target.name} by {self.heal_amount} health")
+        if user.inventory.get(self) > 0:
+            target.health += self.heal_amount
+            target.health = min(target.health, target.max_health) # a barrier so you dont go over max health
+            user.inventory[self] -= 1
+            target.healthbar.update_health()
+            print(f"{user.name} used {self.name}, and healed {target.name} by {self.heal_amount} health")
+        else:
+            print(f"{user.name} ran out of {self.name}")
 
 
 class Ammo(Item):
@@ -81,10 +109,13 @@ class Ammo(Item):
         super().__init__(name, cost)
         self.piercing = piercing
     
-    def use(self, user, weapon) -> int: #TODO: if used from the inv creates an error
-        weapon.damage += int(weapon.damage * ((self.piercing * 5) / 100))
-        user.inventory[self] -= 1
-        return int(weapon.damage * ((self.piercing * 5) / 100)) # returns it so the attack method can subtract it after firing
+    def use(self, user, weapon) -> int:
+        if weapon.loaded != self:
+            weapon.damage += int(weapon.damage * ((self.piercing * 5) / 100))
+            user.inventory[self] -= 1
+            weapon.loaded = self
+        elif weapon.loaded:
+            user.inventory[self] -= 1
 
 
 class OffensiveItem(Item): # goes through armor on purpose, TODO: maybe make it deal damage to all enemies at once instead
@@ -93,11 +124,15 @@ class OffensiveItem(Item): # goes through armor on purpose, TODO: maybe make it 
         self.damage = damage
     
     def use(self, user, target):
-        target.health -= self.damage
-        target.health = max(target.health, 0) # a barrier so you dont go under 0
-        user.inventory[self] -= 1
-        target.healthbar.update_health()
-        print(f"{user.name} used {self.name}, and dealt {self.damage} damage to {target.name}")
+        if user.inventory.get(self) > 0:
+            target.health -= self.damage
+            target.health = max(target.health, 0) # a barrier so you dont go under 0
+            user.inventory[self] -= 1
+            target.healthbar.update_health()
+            print(f"{user.name} used {self.name}, and dealt {self.damage} damage to {target.name}")
+        else:
+            print(f"{user.name} ran out of {self.name}")
+
 
 fists = Weapon(name="Fists", damage=10, damage_type="bludgeoning", cost=None)
 
@@ -129,7 +164,7 @@ iron_shield = Shield(name="Iron shield", sturdiness=4, cost=None)
 
 wooden_arrow = Ammo(name="Wooden arrow", piercing=1, cost=None)
 
-flit_arrow = Ammo(name="Flint arrow", piercing=2, cost=None)
+flit_arrow = Ammo(name="Flint arrow", piercing=3, cost=None)
 
 
 small_health = HealingItem(name="Small potion of healing", heal_amount=150, cost=None)
