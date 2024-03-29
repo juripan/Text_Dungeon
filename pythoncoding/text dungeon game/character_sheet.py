@@ -9,8 +9,8 @@ class Character():
     base character class, any living thing inherits this class
 
     stats (max value is 20 for every stat)
-    strength - makes meelee weapons do more damage TODO
-    dexterity - makes long ranged weapons deal more damage TODO
+    strength - makes meelee weapons do more damage
+    dexterity - makes long ranged weapons deal more damage
     vigor - raises max hp of character
     agility - run and dodge chances
     luck - crit chances
@@ -35,14 +35,14 @@ class Character():
         self.shielded: bool = False
         self.vulnerable: bool = True
     
-    def attack_calc(self, other):
+    def attack_calc(self, other, modifier):
         added_message = "!"
         roll = randint(1, 100 - 5 * self.stats["luck"] + 1) # max luck stat is 20, 21 throws an error
         if roll == 1: # critical hit, ignores armor and shielding
-            attack_damage = self.weapon.damage * 3
+            attack_damage = int((self.weapon.damage + self.weapon.damage * (modifier * 5 / 100)) * 3)
             added_message = ", critical hit!"
         else:
-            attack_damage = int(self.weapon.damage * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
+            attack_damage = int((self.weapon.damage + self.weapon.damage * (modifier * 5 / 100)) * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
             if other.shielded:
                 attack_damage = int(attack_damage * ((100 - other.shield.sturdiness * 15) / 100)) # if shield is up then lowers the damage
                 print(f"{other.name} blocked the attack!")
@@ -55,16 +55,18 @@ class Character():
     def attack(self, other): #TODO: very messy, organize this
         if other.vulnerable:
             if isinstance(self.weapon, itm.RangedWeapon):
+                # ranged attack, dexterity buffs by 5 percent for each level (ignores base level)
                 for item in self.inventory: # attempts to find the ammo for the weapon
                     if isinstance(item, itm.Ammo) and self.inventory[item] > 0:
-                        item.use(self, self.weapon) # loads the weapon
-                        Character.attack_calc(self, other)
+                        item.load_weapon(self, self.weapon) # loads the weapon
+                        Character.attack_calc(self, other, self.stats["dexterity"] - 1)
                         break
                 else:
                     print(f"{self.name} ran out of ammo!")
                     self.weapon.loaded = False
             else:
-                Character.attack_calc(self, other) # close range attack
+                # close range attack, strength buffs by 5 percent for each level (ignores base level)
+                Character.attack_calc(self, other, self.stats["strength"] - 1)
         else:
             print(f"{self.name}s attack missed!")
 

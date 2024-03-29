@@ -109,7 +109,7 @@ class Ammo(Item):
         super().__init__(name, cost)
         self.piercing = piercing
     
-    def use(self, user, weapon) -> int:
+    def load_weapon(self, user, weapon) -> int:
         if weapon.loaded != self:
             weapon.damage += int(weapon.damage * ((self.piercing * 5) / 100))
             user.inventory[self] -= 1
