@@ -9,10 +9,10 @@ class Character():
     base character class, any living thing inherits this class
 
     stats (max value is 20 for every stat)
-    strength - makes meelee weapons do more damage
-    dexterity - makes long ranged weapons deal more damage
-    vigor - raises max hp of character
-    agility - run and dodge chances
+    strength - makes meelee weapons do more damage,
+    dexterity - makes long ranged weapons deal more damage,
+    vigor - raises max hp of character,
+    agility - run and dodge chances,
     luck - crit chances
     """
     def __init__(self, name: str, max_health: int, level: int=0, inventory: dict={}, 
@@ -131,14 +131,23 @@ class Enemy(Character): #TODO: add magic / spells to the enemy and add more enem
         player.money += self.money_dropped_on_kill
         player.experience_points += self.exp_dropped_on_kill
         print(f"{self.name} died, {player.name} earned {self.money_dropped_on_kill} gold and {self.exp_dropped_on_kill} experience!")
+    
+    def deepcopy(self):
+        """
+        returns a unique object based on itself, used to create a different instance of the same enemy type
+        """
+        return Enemy(name=self.name, max_health=self.max_health, level=self.level, money_dropped_on_kill=self.money_dropped_on_kill, 
+                     exp_dropped_on_kill=self.exp_dropped_on_kill, stats = self.stats)
 
 
 player = Player(name="Player", max_health=1000, 
                 inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1, itm.bow: 1, itm.wooden_arrow: 5, itm.leather_armor: 1, itm.flit_arrow: 3}, 
                 stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
-enemy1 = Enemy(name="Ur mom", max_health=100, level=2, money_dropped_on_kill=20, exp_dropped_on_kill=20, 
+
+
+bat = Enemy(name="Bat", max_health=100, level=2, money_dropped_on_kill=20, exp_dropped_on_kill=20, 
                stats = {"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
-enemy2 = Enemy(name="Ur dad", max_health=300, level=4, money_dropped_on_kill=40, exp_dropped_on_kill=40,
+skeleton = Enemy(name="Skeleton", max_health=300, level=4, money_dropped_on_kill=40, exp_dropped_on_kill=40,
                stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
 
-enemies = [enemy1, enemy2] # all attackable enemies are here
+all_enemies = [bat, skeleton] # all implemented enemies are here
