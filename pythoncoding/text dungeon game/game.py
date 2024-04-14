@@ -6,7 +6,7 @@ from character_sheet import player, all_enemies
 class Battle: #TODO: add enemy behavior here (AI)
     """
     battle manager
-    manages turns and events that occur during the battle and after it
+    contains and manages turns and events that occur during the battle and after it
     """
 
     def __init__(self, player) -> None:
@@ -14,7 +14,7 @@ class Battle: #TODO: add enemy behavior here (AI)
         self.enemies: list = []
         self.initial_player_level = player.level
     
-    def generate_encounter(self, all_enemies: list) -> None: # TODO: make level and the stats of the enemies scaleable based on player level
+    def generate_encounter(self, all_enemies: list) -> None:
         """
         generates a random encounter
         1 to 3 enemies picked from the all_enemies list are added to the self.enemies list
@@ -31,13 +31,15 @@ class Battle: #TODO: add enemy behavior here (AI)
             self.enemies.append(new_enemy) # adds the enemy to the encounter
 
     def turn_resets(self) -> None:
-        #resets blocking and dodging bools back to their original state
+        """resets blocking and dodging bools back to their original state"""
         self.player.vulnerable = True
         self.player.shielded = False
 
     def levelup_check(self) -> None:
-        # if you hit the amount of exp you need to level up
-        # keeps leveling up until your exp is less than the exp cap
+        """
+        triggers if the player hits the required experience cap
+        keeps leveling up until the players exp is less than the experience cap
+        """
         while self.player.experience_points >= self.player.experience_cap:
             self.player.experience_points -= self.player.experience_cap
             self.player.level += 1
@@ -45,7 +47,7 @@ class Battle: #TODO: add enemy behavior here (AI)
             print(f"{self.player.name} reached level {self.player.level}!")
     
     def level_up(self, level_up_points) -> None:
-        # gives the player a chance to add to your stats after the battle is over and if you got some levels
+        """gives the player a chance to add to your stats after the battle is over and if the player got some levels"""
         for i in range(level_up_points):
             print("--------------------------------------")
             print("choose a stat to level up")
@@ -61,14 +63,15 @@ class Battle: #TODO: add enemy behavior here (AI)
                     print(f"You leveled up {stat}!")
 
                     if stat == "vigor": # raises your hp for every vigor point you added
-                        self.player.max_health += int(self.player.max_health * (20/100))
+                        self.player.max_health += int(self.player.max_health * (10/100))
                     break
             else:
-                print("this stat doesnt exist / is too high")
+                print("this stat doesn't exist / is too high")
                 return Battle.level_up(self, level_up_points)
 
     
     def battle_loop(self) -> None:
+        """starts the battle and manages all of the battle events in its while loop"""
         Battle.generate_encounter(self, all_enemies)
         while self.enemies and self.player.health > 0: # fight continues until enemies are dead or the player is dead
             self.player.menu.display_battle_menu(self.enemies) # players turn

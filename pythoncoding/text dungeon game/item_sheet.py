@@ -3,7 +3,7 @@
 class Item():
     """
     base item class
-    any item iherits this class
+    any item inherits this class
     """
     def __init__(self, name: str, cost: int) -> None:
         self.name = name
@@ -16,7 +16,7 @@ class Weapon(Item):
         self.damage = damage
         self.damage_type = damage_type
     
-    def use(self, user, target): # target isnt used cuz the user is the target automatically, still defined so it doesnt raise an error
+    def use(self, user, target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
         if user.weapon == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.weapon.name}")
             user.inventory[user.weapon] += 1
@@ -36,7 +36,7 @@ class RangedWeapon(Weapon):
         self.weapon_range = weapon_range
         self.loaded = False # default False, saves the type of ammo that is loaded into the weapon
     
-    def use(self, user, target): # target isnt used cuz the user is the target automatically, still defined so it doesnt raise an error
+    def use(self, user, target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
         if user.weapon == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.weapon.name}")
             user.inventory[user.weapon] += 1
@@ -55,7 +55,7 @@ class Armor(Item):
         super().__init__(name, cost)
         self.resistance = resistance
     
-    def use(self, user, target): # target isnt used cuz the user is the target automatically
+    def use(self, user, target): # target isn't used cuz the user is the target automatically
         if user.armor == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.armor.name}")
             user.inventory[user.armor] += 1
@@ -74,7 +74,7 @@ class Shield(Item):
         super().__init__(name, cost)
         self.sturdiness = sturdiness
     
-    def use(self, user, target): # target isnt used cuz the user is the target automatically
+    def use(self, user, target): # target isn't used cuz the user is the target automatically
         if user.shield == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.shield.name}")
             user.inventory[user.shield] += 1

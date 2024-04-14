@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, choice
 
 import item_sheet as itm
 from healthbar import Healthbar
@@ -9,14 +9,13 @@ class Character():
     base character class, any living thing inherits this class
 
     stats (max value is 20 for every stat)
-    strength - makes meelee weapons do more damage,
+    strength - makes melee weapons do more damage,
     dexterity - makes long ranged weapons deal more damage,
     vigor - raises max hp of character,
     agility - run and dodge chances,
     luck - crit chances
     """
-    def __init__(self, name: str, max_health: int, level: int=0, inventory: dict={}, 
-                 stats: dict={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}) -> None:
+    def __init__(self, name: str, max_health: int, stats: dict, level: int=0, inventory: dict={}) -> None:
         self.name = name
         self.max_health = max_health
         self.health = max_health
@@ -24,7 +23,7 @@ class Character():
         self.stats = stats
 
         for i in range(self.stats["vigor"] - 1): # initializes the max health and health based on the initial vigor stat
-            self.max_health += int(self.max_health * (20/100))
+            self.max_health += int(self.max_health * (10/100))
             self.health = self.max_health
 
         self.weapon = itm.fists
@@ -75,12 +74,11 @@ class Player(Character):
     """
     main player of the game
     """
-    def __init__(self, name: str, max_health: int, experience_points: int=0, level: int=0, inventory: dict={}, 
-                 stats: dict={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}, money: int=0) -> None:
-        super().__init__(name, max_health, level, inventory, stats)
+    def __init__(self, name: str, max_health: int, stats: dict, experience_points: int=0, level: int=0, inventory: dict={}, money: int=0) -> None:
+        super().__init__(name, max_health, stats, level, inventory)
         self.money: int = money
         self.experience_points = experience_points
-        self.experience_cap = 10 # determies how much exp you need for a level up
+        self.experience_cap = 10 # determines how much exp you need for a level up
         self.level = level
         self.run_success: bool = False
         self.healthbar = Healthbar(self)
@@ -117,14 +115,13 @@ class Player(Character):
 class Enemy(Character): #TODO: add magic / spells to the enemy and add more enemy variants (subclasses)
     """
     basic enemy class
+    when initialized checks its level and randomly distributes its stats based on its level
     """
-    def __init__(self, name: str, max_health: int, level: int=0, inventory: dict={}, 
-                 stats: dict={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1},
-                 money_dropped_on_kill: int=0, exp_dropped_on_kill: int=0) -> None:
-        super().__init__(name, max_health, level, inventory, stats)
-        self.healthbar = Healthbar(self)
-        self.money_dropped_on_kill = money_dropped_on_kill
+    def __init__(self, name: str, max_health: int, stats: dict, level: int=0, inventory: dict={}, money_dropped_on_kill: int=0, exp_dropped_on_kill: int=0) -> None:
+        super().__init__(name, max_health, stats, level, inventory)
         self.exp_dropped_on_kill = exp_dropped_on_kill
+        self.money_dropped_on_kill = money_dropped_on_kill
+        self.healthbar = Healthbar(self)
     
     def death(self, player, enemies):
         enemies.remove(self)
@@ -135,19 +132,27 @@ class Enemy(Character): #TODO: add magic / spells to the enemy and add more enem
     def deepcopy(self):
         """
         returns a unique object based on itself, used to create a different instance of the same enemy type
+        randomizes its stats and returns a new objects with the new stats based on player level
         """
-        return Enemy(name=self.name, max_health=self.max_health, level=self.level, money_dropped_on_kill=self.money_dropped_on_kill, 
-                     exp_dropped_on_kill=self.exp_dropped_on_kill, stats = self.stats)
+        new_stats = {"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}
+        new_level = max(player.level + randint(-1, 2), 0)
+        new_exp_dropped_on_kill = int(self.exp_dropped_on_kill + (self.exp_dropped_on_kill * self.level) / 10)
+        new_money_dropped_on_kill = int(self.money_dropped_on_kill + (self.money_dropped_on_kill * self.level) / 20)
+
+        for i in range(new_level):
+            random_stat = choice(list(new_stats.keys()))
+            new_stats[random_stat] += 1
+        
+        return Enemy(name=self.name, max_health=self.max_health, level=new_level, money_dropped_on_kill=new_money_dropped_on_kill, 
+                     exp_dropped_on_kill=new_exp_dropped_on_kill, stats = new_stats)
 
 
-player = Player(name="Player", max_health=1000, 
-                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1, itm.bow: 1, itm.wooden_arrow: 5, itm.leather_armor: 1, itm.flit_arrow: 3}, 
-                stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
+player = Player(name="Player", max_health=1000, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1},  level=0,
+                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1, itm.bow: 1, itm.wooden_arrow: 5, itm.leather_armor: 1, itm.flit_arrow: 3})
 
-
-bat = Enemy(name="Bat", max_health=100, level=2, money_dropped_on_kill=20, exp_dropped_on_kill=20, 
-               stats = {"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
-skeleton = Enemy(name="Skeleton", max_health=300, level=4, money_dropped_on_kill=40, exp_dropped_on_kill=40,
-               stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1})
+bat = Enemy(name="Bat", max_health=100, stats = {"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}, 
+            level=0, money_dropped_on_kill=20, exp_dropped_on_kill=20)
+skeleton = Enemy(name="Skeleton", max_health=300, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}, 
+                 level=0, money_dropped_on_kill=40, exp_dropped_on_kill=40)
 
 all_enemies = [bat, skeleton] # all implemented enemies are here

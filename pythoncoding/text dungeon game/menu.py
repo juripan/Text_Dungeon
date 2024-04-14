@@ -19,7 +19,7 @@ class BattleMenu():
         'item' or '3' - brings up the item use menu / inventory
         'run' or '4' - attempts to run from the battle
         
-        Atttack menu:
+        Attack menu:
         *name of enemy or their order number* - attack that enemy with your weapon
         'back' or '..' - goes back to the previous menu
 
@@ -33,7 +33,7 @@ class BattleMenu():
         *name of the item or its order number* - determines the item you equip/use (if its equipped already then its going to get unequipped)
         'back' or '..' - goes back to the previous menu
         2nd input(use on who?):
-        *name of the enemy or their order number* - determines the target you use the item on (equip or heasl items automatically target you)
+        *name of the enemy or their order number* - determines the target you use the item on (equip or heals items automatically target you)
         'back' or '..' - goes back to the previous menu
         any other input will use the item on you""")
         print(self.symbol_border * self.default_width)
