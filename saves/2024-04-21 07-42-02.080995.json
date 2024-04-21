@@ -1,0 +1,33 @@
+{
+    "name": "Player",
+    "max_health": 1000,
+    "health": 1000,
+    "level": 20,
+    "stats": {
+        "strength": 1,
+        "dexterity": 1,
+        "vigor": 1,
+        "agility": 1,
+        "luck": 1
+    },
+    "weapon": "obj_Fists",
+    "armor": "obj_Iron armor",
+    "shield": "obj_No shield",
+    "inventory": {
+        "obj_Potion of healing": 3,
+        "obj_Bomb": 20,
+        "obj_Dagger": 1,
+        "obj_Iron armor": 1,
+        "obj_Iron shield": 1,
+        "obj_Bow": 3,
+        "obj_Wooden arrow": 5,
+        "obj_Leather armor": 1,
+        "obj_Flint arrow": 3
+    },
+    "shielded": false,
+    "vulnerable": true,
+    "money": 0,
+    "experience_points": 0,
+    "experience_cap": 10,
+    "run_success": false
+}

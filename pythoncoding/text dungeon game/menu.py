@@ -1,6 +1,19 @@
-# menu class, gives the player control of their character
+
+class OverworldMenu: # TODO: make this menu, should display the movement options + the map like a pseudo gui
+    """
+    menu that shows up when playing the game / map menu
+    """
+    symbol_border: str = "─"
+    default_width: int = 50
+
+    def __init__(self) -> None:
+        pass
+
 
 class BattleMenu():
+    """
+    menu class, gives the player control of their character
+    """
     symbol_border: str = "─"
     default_width: int = 50
 
@@ -42,7 +55,7 @@ class BattleMenu():
     def mini_attack_menu(self, targets):
         print(self.symbol_border * self.default_width)
         print("who do you want to attack?")
-        choice = input(">").lower() # you can either use the name of the enemy or their number in the listed thext to them in console
+        choice = input(">").lower() # you can either use the name of the enemy or their number in the listed next to them in console
 
         if choice == "back" or choice == "..": # if you want to go back to the original menu
             return BattleMenu.display_battle_menu(self, targets)
@@ -135,7 +148,7 @@ class BattleMenu():
         print("Enemies:")
         for i, target in enumerate(targets): # prints out every enemy thats in the fight
             print(f"│ {i+1}. {target.name} (level {target.level})", end=" ")
-            target.healthbar.display_health(name_display=False, end=" ")
+            target.healthbar.display_health(name_display=False)
         
         print(f"┌{self.symbol_border * (len(choices_display) - 2)}┐")
         print(f"│ {self.entity.name.ljust(len(choices_display)-3)}│") # string formatting to add spaces

@@ -89,17 +89,21 @@ class Shield(Item):
 
 
 class HealingItem(Item):
+    """
+    heal_amount: int - its a percentage of target health that gets healed
+    """
     def __init__(self, name: str, cost: int, heal_amount: int) -> None:
         super().__init__(name, cost)
         self.heal_amount = heal_amount
     
-    def use(self, user, target): # you can heal anyone and I mean ANYONE, even an enemy
+    def use(self, user, target): # note: you can heal anyone and I mean ANYONE, even an enemy
         if user.inventory.get(self) > 0:
-            target.health += self.heal_amount
+            healed = target.max_health * self.heal_amount // 100
+            target.health += healed
             target.health = min(target.health, target.max_health) # a barrier so you dont go over max health
             user.inventory[self] -= 1
             target.healthbar.update_health()
-            print(f"{user.name} used {self.name}, and healed {target.name} by {self.heal_amount} health")
+            print(f"{user.name} used {self.name}, and healed {target.name} by {healed} health")
         else:
             print(f"{user.name} ran out of {self.name}")
 
@@ -167,12 +171,21 @@ wooden_arrow = Ammo(name="Wooden arrow", piercing=1, cost=None)
 flit_arrow = Ammo(name="Flint arrow", piercing=3, cost=None)
 
 
-small_health = HealingItem(name="Small potion of healing", heal_amount=150, cost=None)
+small_health = HealingItem(name="Small potion of healing", heal_amount=20, cost=None)
 
-medium_health = HealingItem(name="Potion of healing", heal_amount=300, cost=None)
+medium_health = HealingItem(name="Potion of healing", heal_amount=50, cost=None)
 
-big_health = HealingItem(name="Big potion of healing", heal_amount=500, cost=None)
+big_health = HealingItem(name="Big potion of healing", heal_amount=70, cost=None)
 
 bomb = OffensiveItem(name="Bomb", damage=80, cost=None)
 
 dynamite = OffensiveItem(name="Stick of dynamite", damage=50, cost=None)
+
+
+every_item = [fists, iron_sword, dagger, 
+              bow, short_bow, 
+              no_armor, leather_armor, chainmail_armor, iron_armor, 
+              no_shield, wooden_shield, iron_shield, 
+              wooden_arrow, flit_arrow,
+              small_health, medium_health, big_health,
+              bomb, dynamite]

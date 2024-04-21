@@ -1,6 +1,7 @@
 # main file only used for testing features
 from random import randint
 
+from mainmenu import MainMenu
 from character_sheet import player, all_enemies
 
 class Battle: #TODO: add enemy behavior here (AI)
@@ -47,10 +48,12 @@ class Battle: #TODO: add enemy behavior here (AI)
             print(f"{self.player.name} reached level {self.player.level}!")
     
     def level_up(self, level_up_points) -> None:
-        """gives the player a chance to add to your stats after the battle is over and if the player got some levels"""
+        """
+        gives the player a chance to add to your stats after the battle is over and if the player got some levels
+        """
         for i in range(level_up_points):
             print("--------------------------------------")
-            print("choose a stat to level up")
+            print("Choose a stat to level up:")
             for i, stat in enumerate(self.player.stats):
                 print(f"{i + 1}. {stat} {self.player.stats[stat]}")
             
@@ -64,9 +67,10 @@ class Battle: #TODO: add enemy behavior here (AI)
 
                     if stat == "vigor": # raises your hp for every vigor point you added
                         self.player.max_health += int(self.player.max_health * (10/100))
+                        self.player.healthbar.update_max_health() # updates max health so the healthbar is synced up
                     break
             else:
-                print("this stat doesn't exist / is too high")
+                print("This stat doesn't exist / is too high")
                 return Battle.level_up(self, level_up_points)
 
     
@@ -92,19 +96,23 @@ class Battle: #TODO: add enemy behavior here (AI)
             Battle.levelup_check(self) # checks if the player leveled up
         
         if self.player.health != 0:
-            level_up_points = self.player.level - self.initial_player_level # sets how many levels you leveled up by durng the battle
+            level_up_points = self.player.level - self.initial_player_level # sets how many levels you leveled up by during the battle
             Battle.level_up(self,level_up_points)
         
         print(self.player.stats)
-        print(f"your current exp: {player.experience_points}, current level: {player.level}, how much exp you need to get for new level: {player.experience_cap}")
         print("END OF BATTLE")
+        print(f"your current exp: {player.experience_points}/{player.experience_cap}, current level: {player.level}")
 
 
-battle1 = Battle(player)
-
+battle1 = Battle(player) # TODO: add a way for battles to define themselves, same with the menu, maybe rewrite the as just functions not as classes
+battle2 = Battle(player)
+menu = MainMenu()
 
 def main():
+    if not menu.display_main_menu(): # if this returns 0 (player chooses quit) then the program ends
+        return
     battle1.battle_loop()
+    battle2.battle_loop() # works with multiple battles, player stats and items carry over, enemies get reset
 
 if __name__=="__main__":
     main()

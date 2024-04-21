@@ -51,7 +51,8 @@ class Character():
         other.healthbar.update_health()
         print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage" + added_message)
     
-    def attack(self, other): #TODO: very messy, organize this
+    def attack(self, other): # maybe its more readable who knows *shrug*
+        """
         if other.vulnerable:
             if isinstance(self.weapon, itm.RangedWeapon):
                 # ranged attack, dexterity buffs by 5 percent for each level (ignores base level)
@@ -68,6 +69,22 @@ class Character():
                 Character.attack_calc(self, other, self.stats["strength"] - 1)
         else:
             print(f"{self.name}s attack missed!")
+        """
+        if not other.vulnerable:
+            print(f"{self.name}s attack missed!")
+        elif not isinstance(self.weapon, itm.RangedWeapon):
+            # close range attack, strength buffs by 5 percent for each level (ignores base level)
+            Character.attack_calc(self, other, self.stats["strength"] - 1)
+        else:
+            # ranged attack, dexterity buffs by 5 percent for each level (ignores base level)
+            for item in self.inventory: # attempts to find the ammo for the weapon
+                if isinstance(item, itm.Ammo) and self.inventory[item] > 0:
+                    item.load_weapon(self, self.weapon) # loads the weapon
+                    Character.attack_calc(self, other, self.stats["dexterity"] - 1)
+                    break
+            else:
+                print(f"{self.name} ran out of ammo!")
+                self.weapon.loaded = False
 
 
 class Player(Character):
