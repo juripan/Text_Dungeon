@@ -117,11 +117,15 @@ class Player(Character):
         else:
             print("You cannot use this item")
 
-    def run_from_battle(self, targets):
+    def run_from_battle(self, targets): # maybe re-balance the running, its too unlikely
         threshold: int = 25
         sum_target_level: int = 0
-        for target in targets: sum_target_level += target.level
+        
+        for target in targets: 
+            sum_target_level += target.level
+        
         roll = randint(0 - sum_target_level, 30) # maybe make it into an average level not a sum
+        
         if roll > (threshold - self.stats["agility"] + 1): # + 1 to make base agility not do anything (base is 1)
             self.run_success = True
             print(f"{self.name} ran away successfully!")

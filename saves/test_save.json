@@ -1,14 +1,14 @@
 {
-    "name": "Player",
+    "name": "Ass cheeks",
     "max_health": 1000,
     "health": 1000,
     "level": 20,
     "stats": {
-        "strength": 1,
-        "dexterity": 1,
-        "vigor": 1,
-        "agility": 1,
-        "luck": 1
+        "strength": 20,
+        "dexterity": 20,
+        "vigor": 20,
+        "agility": 20,
+        "luck": 20
     },
     "weapon": "obj_Fists",
     "armor": "obj_Iron armor",

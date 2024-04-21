@@ -32,7 +32,9 @@ class Battle: #TODO: add enemy behavior here (AI)
             self.enemies.append(new_enemy) # adds the enemy to the encounter
 
     def turn_resets(self) -> None:
-        """resets blocking and dodging bools back to their original state"""
+        """
+        resets blocking and dodging bools back to their original state
+        """
         self.player.vulnerable = True
         self.player.shielded = False
 
@@ -52,6 +54,10 @@ class Battle: #TODO: add enemy behavior here (AI)
         gives the player a chance to add to your stats after the battle is over and if the player got some levels
         """
         for i in range(level_up_points):
+            if sum(self.player.stats.values()) >= 20 * 5:
+                print("All of your stats are maxed out, no leveling up can be done")
+                break
+
             print("--------------------------------------")
             print("Choose a stat to level up:")
             for i, stat in enumerate(self.player.stats):
@@ -65,7 +71,7 @@ class Battle: #TODO: add enemy behavior here (AI)
                     level_up_points -= 1
                     print(f"You leveled up {stat}!")
 
-                    if stat == "vigor": # raises your hp for every vigor point you added
+                    if stat == "vigor": # raises players hp for every vigor point the player added
                         self.player.max_health += int(self.player.max_health * (10/100))
                         self.player.healthbar.update_max_health() # updates max health so the healthbar is synced up
                     break
@@ -75,12 +81,15 @@ class Battle: #TODO: add enemy behavior here (AI)
 
     
     def battle_loop(self) -> None:
-        """starts the battle and manages all of the battle events in its while loop"""
+        """
+        starts the battle and manages all of the battle events in its while loop
+        """
         Battle.generate_encounter(self, all_enemies)
         while self.enemies and self.player.health > 0: # fight continues until enemies are dead or the player is dead
             self.player.menu.display_battle_menu(self.enemies) # players turn
 
             if self.player.run_success: # if player runs away then battle ends
+                self.player.run_success = False # flips it for so the next battle doesn't have a 100% run chance
                 break
 
             for enemy in self.enemies:
@@ -99,7 +108,6 @@ class Battle: #TODO: add enemy behavior here (AI)
             level_up_points = self.player.level - self.initial_player_level # sets how many levels you leveled up by during the battle
             Battle.level_up(self,level_up_points)
         
-        print(self.player.stats)
         print("END OF BATTLE")
         print(f"your current exp: {player.experience_points}/{player.experience_cap}, current level: {player.level}")
 
@@ -109,7 +117,7 @@ battle2 = Battle(player)
 menu = MainMenu()
 
 def main():
-    if not menu.display_main_menu(): # if this returns 0 (player chooses quit) then the program ends
+    if not menu.display_main_menu(): # if this returns 0 (player chooses quit) then the program ends else it returns 1
         return
     battle1.battle_loop()
     battle2.battle_loop() # works with multiple battles, player stats and items carry over, enemies get reset

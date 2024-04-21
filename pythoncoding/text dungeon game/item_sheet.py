@@ -90,7 +90,7 @@ class Shield(Item):
 
 class HealingItem(Item):
     """
-    heal_amount: int - its a percentage of target health that gets healed
+    heal_amount: int - a percentage of target health that gets healed
     """
     def __init__(self, name: str, cost: int, heal_amount: int) -> None:
         super().__init__(name, cost)
