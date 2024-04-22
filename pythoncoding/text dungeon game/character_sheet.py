@@ -4,6 +4,7 @@ import item_sheet as itm
 from healthbar import Healthbar
 from menu import BattleMenu
 
+
 class Character():
     """
     base character class, any living thing inherits this class
@@ -35,7 +36,7 @@ class Character():
         self.vulnerable: bool = True
     
     def attack_calc(self, other, modifier):
-        added_message = "!"
+        added_message: str = "!"
         roll = randint(1, 100 - 5 * self.stats["luck"] + 1) # max luck stat is 20, 21 throws an error
         if roll == 1: # critical hit, ignores armor and shielding
             attack_damage = int((self.weapon.damage + self.weapon.damage * (modifier * 5 / 100)) * 3)
@@ -51,25 +52,7 @@ class Character():
         other.healthbar.update_health()
         print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage" + added_message)
     
-    def attack(self, other): # maybe its more readable who knows *shrug*
-        """
-        if other.vulnerable:
-            if isinstance(self.weapon, itm.RangedWeapon):
-                # ranged attack, dexterity buffs by 5 percent for each level (ignores base level)
-                for item in self.inventory: # attempts to find the ammo for the weapon
-                    if isinstance(item, itm.Ammo) and self.inventory[item] > 0:
-                        item.load_weapon(self, self.weapon) # loads the weapon
-                        Character.attack_calc(self, other, self.stats["dexterity"] - 1)
-                        break
-                else:
-                    print(f"{self.name} ran out of ammo!")
-                    self.weapon.loaded = False
-            else:
-                # close range attack, strength buffs by 5 percent for each level (ignores base level)
-                Character.attack_calc(self, other, self.stats["strength"] - 1)
-        else:
-            print(f"{self.name}s attack missed!")
-        """
+    def attack(self, other):
         if not other.vulnerable:
             print(f"{self.name}s attack missed!")
         elif not isinstance(self.weapon, itm.RangedWeapon):
@@ -111,11 +94,14 @@ class Player(Character):
             self.vulnerable = False
         print(f"{self.name} attempts to dodge the upcoming attack")
     
-    def use_item(self, item, target): #self is the player, target is the who its used on (you or the enemy)
+    def use_item(self, item, target, targets): #self is the player, target is the who its used on (you or the enemy), targets is the whole encounter
         if not isinstance(item, itm.Ammo): # checks of the item is usable
-            item.use(self, target)
+            if hasattr(item, "splash_damage") and item.splash_damage:
+                item.use(self, targets)
+            else:
+                item.use(self, target)
         else:
-            print("You cannot use this item")
+            print("You cannot use/equip this item")
 
     def run_from_battle(self, targets): # maybe re-balance the running, its too unlikely
         threshold: int = 25
@@ -169,11 +155,13 @@ class Enemy(Character): #TODO: add magic / spells to the enemy and add more enem
 
 
 player = Player(name="Player", max_health=1000, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1},  level=0,
-                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1, itm.bow: 1, itm.wooden_arrow: 5, itm.leather_armor: 1, itm.flit_arrow: 3})
+                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1, itm.bow: 1, itm.wooden_arrow: 5, itm.leather_armor: 1, itm.flit_arrow: 3, itm.throwing_knives: 5})
 
-bat = Enemy(name="Bat", max_health=100, stats = {"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}, 
+bat = Enemy(name="Bat", max_health=100, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}, 
             level=0, money_dropped_on_kill=20, exp_dropped_on_kill=20)
 skeleton = Enemy(name="Skeleton", max_health=300, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}, 
                  level=0, money_dropped_on_kill=40, exp_dropped_on_kill=40)
+slime = Enemy(name="Slime", max_health=200, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1},
+              level=0, money_dropped_on_kill=30, exp_dropped_on_kill=30)
 
-all_enemies = [bat, skeleton] # all implemented enemies are here
+all_enemies = [bat, skeleton, slime] # all implemented enemies are here

@@ -11,10 +11,16 @@ class Healthbar:
         self.max_value = entity.max_health
         self.current_value = entity.health
     
-    def update_health(self) -> None: # updates the health of healthbar, used after the health changes in any way
+    def update_health(self) -> None: # used after the health changes in any way
+        """
+        updates the health of healthbar
+        """
         self.current_value = self.entity.health
     
-    def update_max_health(self) -> None: # updates the max health of healthbar, used when leveling up vigor
+    def update_max_health(self) -> None: # used when leveling up vigor
+        """
+        updates the max health of healthbar
+        """
         self.max_value = self.entity.max_health
 
     def display_health(self, name_display=True) -> None:

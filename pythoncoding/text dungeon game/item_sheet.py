@@ -123,17 +123,25 @@ class Ammo(Item):
 
 
 class OffensiveItem(Item): # goes through armor on purpose, TODO: maybe make it deal damage to all enemies at once instead
-    def __init__(self, name: str, cost: int, damage: int) -> None:
+    def __init__(self, name: str, cost: int, damage: int, splash_damage: bool) -> None:
         super().__init__(name, cost)
         self.damage = damage
+        self.splash_damage = splash_damage
     
     def use(self, user, target):
         if user.inventory.get(self) > 0:
-            target.health -= self.damage
-            target.health = max(target.health, 0) # a barrier so you dont go under 0
+            if self.splash_damage:
+                for enemy in target:
+                    enemy.health -= self.damage
+                    enemy.health = max(enemy.health, 0) # a barrier so you dont go under 0
+                    enemy.healthbar.update_health()
+                    print(f"{user.name} used {self.name}, and dealt {self.damage} damage to {enemy.name}!")
+            else:
+                target.health -= self.damage
+                target.health = max(target.health, 0) # a barrier so you dont go under 0
+                target.healthbar.update_health()
+                print(f"{user.name} used {self.name}, and dealt {self.damage} damage to {target.name}")
             user.inventory[self] -= 1
-            target.healthbar.update_health()
-            print(f"{user.name} used {self.name}, and dealt {self.damage} damage to {target.name}")
         else:
             print(f"{user.name} ran out of {self.name}")
 
@@ -177,9 +185,12 @@ medium_health = HealingItem(name="Potion of healing", heal_amount=50, cost=None)
 
 big_health = HealingItem(name="Big potion of healing", heal_amount=70, cost=None)
 
-bomb = OffensiveItem(name="Bomb", damage=80, cost=None)
 
-dynamite = OffensiveItem(name="Stick of dynamite", damage=50, cost=None)
+bomb = OffensiveItem(name="Bomb", damage=80, splash_damage=True, cost=None)
+
+dynamite = OffensiveItem(name="Stick of dynamite", damage=50, splash_damage=True, cost=None)
+
+throwing_knives = OffensiveItem(name="Throwing knives", damage=50, splash_damage=False, cost=None)
 
 
 every_item = [fists, iron_sword, dagger, 
@@ -188,4 +199,4 @@ every_item = [fists, iron_sword, dagger,
               no_shield, wooden_shield, iron_shield, 
               wooden_arrow, flit_arrow,
               small_health, medium_health, big_health,
-              bomb, dynamite]
+              bomb, dynamite, throwing_knives]

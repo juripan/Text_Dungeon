@@ -22,7 +22,8 @@
         "obj_Bow": 3,
         "obj_Wooden arrow": 5,
         "obj_Leather armor": 1,
-        "obj_Flint arrow": 3
+        "obj_Flint arrow": 3,
+        "obj_Throwing knives": 10
     },
     "shielded": false,
     "vulnerable": true,

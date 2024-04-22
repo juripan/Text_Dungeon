@@ -9,5 +9,6 @@ def main():
     bm.battle_loop()
     bm.battle_loop() # works with multiple battles, player stats and items carry over, enemies get reset
 
+
 if __name__=="__main__":
     main()

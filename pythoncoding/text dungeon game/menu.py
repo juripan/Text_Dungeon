@@ -23,32 +23,32 @@ class BattleMenu():
     def help(self, targets):
         print(self.symbol_border * self.default_width)
         print("""All possible commands:
-        (yes you can also use numbers instead of commands)
-        (they go by order from left to right)
-        
-        Battle menu:
-        'attack' or '1' - brings up the attack menu
-        'defend' or '2' - brings up the defend menu
-        'item' or '3' - brings up the item use menu / inventory
-        'run' or '4' - attempts to run from the battle
-        
-        Attack menu:
-        *name of enemy or their order number* - attack that enemy with your weapon
-        'back' or '..' - goes back to the previous menu
+(yes you can also use numbers instead of commands)
+(they go by order from left to right)
 
-        Defend menu:
-        'shield' - uses your shield to block the next attack
-        'dodge' - attempts to dodge the next attack
-        'back' or '..' - goes back to the previous menu
-        
-        Item menu:
-        1st input:
-        *name of the item or its order number* - determines the item you equip/use (if its equipped already then its going to get unequipped)
-        'back' or '..' - goes back to the previous menu
-        2nd input(use on who?):
-        *name of the enemy or their order number* - determines the target you use the item on (equip or heals items automatically target you)
-        'back' or '..' - goes back to the previous menu
-        any other input will use the item on you""")
+Battle menu:
+'attack' or '1' - brings up the attack menu
+'defend' or '2' - brings up the defend menu
+'item' or '3' - brings up the item use menu / inventory
+'run' or '4' - attempts to run from the battle
+
+Attack menu:
+*name of enemy or their order number* - attack that enemy with your weapon
+'back' or '..' - goes back to the previous menu
+
+Defend menu:
+'shield' - uses your shield to block the next attack
+'dodge' - attempts to dodge the next attack
+'back' or '..' - goes back to the previous menu
+
+Item menu:
+1st input:
+*name of the item or its order number* - determines the item you equip/use (if its equipped already then its going to get unequipped)
+'back' or '..' - goes back to the previous menu
+2nd input(use on who?):
+*name of the enemy or their order number* - determines the target you use the item on (equip or heals items automatically target you)
+'back' or '..' - goes back to the previous menu
+any other input will use the item on you""")
         print(self.symbol_border * self.default_width)
         BattleMenu.display_battle_menu(self, targets)
 
@@ -112,7 +112,7 @@ class BattleMenu():
 
         for i, item in enumerate(self.entity.inventory):
             if choice == item.name.lower() or choice == str(i + 1):
-                self.entity.use_item(item, target=aimed_at)
+                self.entity.use_item(item, target=aimed_at, targets=targets)
                 break
         else: # if not in the inv
             print("not in the item list")
