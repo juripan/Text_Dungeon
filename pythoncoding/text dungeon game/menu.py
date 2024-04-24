@@ -1,3 +1,4 @@
+from color_file import colors
 
 class OverworldMenu: # TODO: make this menu, should display the movement options + the map like a pseudo gui
     """
@@ -139,7 +140,7 @@ any other input will use the item on you""")
     
     def display_battle_menu(self, targets):
         print(self.symbol_border * self.default_width)
-        print("write 'help' if you need a list of commands")
+        print(f"write {colors["yellow"]}'help'{colors["default"]} if you need a list of commands")
         print(self.symbol_border * self.default_width)
         self.entity.healthbar.display_health() # player health
         
@@ -147,7 +148,7 @@ any other input will use the item on you""")
 
         print("Enemies:")
         for i, target in enumerate(targets): # prints out every enemy thats in the fight
-            print(f"│ {i+1}. {target.name} (level {target.level})", end=" ")
+            print(f"{colors[target.healthbar.color]}│{i+1}. {target.name} (level {target.level}){colors["default"]}", end=" ")
             target.healthbar.display_health(name_display=False)
         
         print(f"┌{self.symbol_border * (len(choices_display) - 2)}┐")

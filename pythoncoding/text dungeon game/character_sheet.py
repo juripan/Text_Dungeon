@@ -23,7 +23,7 @@ class Character():
         self.level = level
         self.stats = stats
 
-        for i in range(self.stats["vigor"] - 1): # initializes the max health and health based on the initial vigor stat
+        for _ in range(self.stats["vigor"] - 1): # initializes the max health and health based on the initial vigor stat
             self.max_health += int(self.max_health * (10/100))
             self.health = self.max_health
 
@@ -81,7 +81,7 @@ class Player(Character):
         self.experience_cap = 10 # determines how much exp you need for a level up
         self.level = level
         self.run_success: bool = False
-        self.healthbar = Healthbar(self)
+        self.healthbar = Healthbar(self, color="light_blue")
         self.menu = BattleMenu(self)
     
     def block_attack(self):
@@ -128,7 +128,7 @@ class Enemy(Character): #TODO: add magic / spells to the enemy and add more enem
         super().__init__(name, max_health, stats, level, inventory)
         self.exp_dropped_on_kill = exp_dropped_on_kill
         self.money_dropped_on_kill = money_dropped_on_kill
-        self.healthbar = Healthbar(self)
+        self.healthbar = Healthbar(self, color="red")
     
     def death(self, player, enemies):
         enemies.remove(self)
@@ -146,7 +146,7 @@ class Enemy(Character): #TODO: add magic / spells to the enemy and add more enem
         new_exp_dropped_on_kill = int(self.exp_dropped_on_kill + (self.exp_dropped_on_kill * self.level) / 10)
         new_money_dropped_on_kill = int(self.money_dropped_on_kill + (self.money_dropped_on_kill * self.level) / 20)
 
-        for i in range(new_level):
+        for _ in range(new_level):
             random_stat = choice(list(new_stats.keys()))
             new_stats[random_stat] += 1
         

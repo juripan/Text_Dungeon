@@ -7,6 +7,9 @@ def remove_all(array: list, item) -> list:
 
 
 class Map:
+    room_walls: list[str] = ["┌───┐", "│   │", "└───┘"]
+    player_sprite: str = "P"
+
     def __init__(self, size: tuple[int, int]):
         self.max_width, self.max_height = size
         self.map_layout: list[list[int]] = [[0 for _ in range(self.max_width)] for _ in range(self.max_height)]
@@ -96,26 +99,23 @@ class Map:
         prints out the whole map based on the map_layout,
         returns None
         """
-        
-        room_walls: list[str] = ["┌───┐", "│   │", "└───┘"]
-        player_sprite: str = "P"
 
         for row in self.map_layout:
             for i in range(3):
                 for column in row:
                     if column == 2: # room occupied by the player
-                        room_walls[1] = f"│ {player_sprite} │"
-                        print(room_walls[i], end="")
-                        room_walls[1] = "│   │"
+                        self.room_walls[1] = f"│ {self.player_sprite} │"
+                        print(self.room_walls[i], end="")
+                        self.room_walls[1] = "│   │"
                     elif column == 1:
-                        print(room_walls[i], end="") # normal room
+                        print(self.room_walls[i], end="") # normal room
                     else:
                         print("     ", end="") # no room
                 print()
 
 
-new_map = Map((15, 15))
+new_map = Map((10, 10))
 
-new_map.generate_layout(11, 5)
+new_map.generate_layout(6, 5)
 
 new_map.draw_map()
