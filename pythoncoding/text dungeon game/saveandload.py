@@ -21,7 +21,7 @@ def save(player: object, map: object):
     del player_info["menu"]
     del player_info["healthbar"]
 
-    with open(r"saves/" + str(datetime.now()).replace(":", "-") + ".json", "w") as f:
+    with open(r"pythoncoding\text dungeon game\saves\\" + str(datetime.now()).replace(":", "-") + ".json", "w") as f:
         json_string = json.dumps(player_info, indent=4)
         f.write(json_string) # writing it as a string cuz the formatting is prettier :)
         #json.dump(player_info, f), could also use this
@@ -31,7 +31,7 @@ def load(file_name: str):
     held_item_objects = []
     inventory_objects = []
 
-    with open(r"saves/" + file_name, "r") as f:
+    with open(r"pythoncoding\text dungeon game\saves\\" + file_name, "r") as f:
         data: dict = json.load(f)
     
     for key, value in data.items():

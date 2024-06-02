@@ -55,7 +55,7 @@ class Armor(Item):
         super().__init__(name, cost)
         self.resistance = resistance
     
-    def use(self, user, target): # target isn't used cuz the user is the target automatically
+    def use(self, user, target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
         if user.armor == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.armor.name}")
             user.inventory[user.armor] += 1
@@ -74,7 +74,7 @@ class Shield(Item):
         super().__init__(name, cost)
         self.sturdiness = sturdiness
     
-    def use(self, user, target): # target isn't used cuz the user is the target automatically
+    def use(self, user, target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
         if user.shield == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.shield.name}")
             user.inventory[user.shield] += 1
@@ -113,7 +113,7 @@ class Ammo(Item):
         super().__init__(name, cost)
         self.piercing = piercing
     
-    def load_weapon(self, user, weapon) -> int:
+    def load_weapon(self, user, weapon):
         if weapon.loaded != self:
             weapon.damage += int(weapon.damage * ((self.piercing * 5) / 100))
             user.inventory[self] -= 1
@@ -122,7 +122,7 @@ class Ammo(Item):
             user.inventory[self] -= 1
 
 
-class OffensiveItem(Item): # goes through armor on purpose, TODO: maybe make it deal damage to all enemies at once instead
+class OffensiveItem(Item): #note: ignores armor
     def __init__(self, name: str, cost: int, damage: int, splash_damage: bool) -> None:
         super().__init__(name, cost)
         self.damage = damage
