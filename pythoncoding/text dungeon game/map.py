@@ -1,16 +1,23 @@
 # map / the level display and generation file
 from random import choice, randint
+import color_file as cf
 
 
 class Map:
     room_walls: list[str] = ["┌───┐", "│   │", "└───┘"]
     player_sprite: str = "P"
-    directions: list[str] = ["up", "down", "left", "right"]
+    player_color: str = "light_blue"
 
     def __init__(self, width, height, max_room_count) -> None:
+        """
+        0 - no room
+        1 - normal room
+        2 - explored room
+        room with '9' at the end - room with the player
+        """
         self.max_room_count: int = max_room_count
         self.max_width, self.max_height = width, height
-        self.map_layout: list[list[int]] = [[0 for _ in range(self.max_width)] for _ in range(self.max_height)]
+        self.map_layout: list[list[str]] = [["0" for _ in range(self.max_width)] for _ in range(self.max_height)]
         self.player_pos: tuple[int, int] = ()
         self.current_pos: tuple[int, int] = ()
 
@@ -25,25 +32,25 @@ class Map:
             if length > y:
                 return True
             for i in range(1, length + 1):
-                if self.map_layout[y - i][x] in (1, 2):
+                if self.map_layout[y - i][x] != "0":
                     return True
         elif direction == "down":
             if length >= self.max_height - y:
                 return True
             for i in range(1, length + 1):
-                if self.map_layout[y + i][x] in (1, 2):
+                if self.map_layout[y + i][x] != "0":
                     return True
         elif direction == "left":
             if length > x:
                 return True
             for i in range(1, length + 1):
-                if self.map_layout[y][x - i] in (1, 2):
+                if self.map_layout[y][x - i] != "0":
                     return True
         elif direction == "right":
             if length >= self.max_width - x:
                 return True
             for i in range(1, length + 1):
-                if self.map_layout[y][x + i] in (1, 2):
+                if self.map_layout[y][x + i] != "0":
                     return True
         return False
 
@@ -54,7 +61,7 @@ class Map:
         returns: None
         """
         x, y = self.player_pos
-        self.map_layout[y][x] = 1
+        self.map_layout[y][x] = "2"
         if direction == "up" and y - 1 > 0 and self.map_layout[y - 1][x] != 0:
             y -= 1
         elif direction == "down" and y + 1 < self.max_height and self.map_layout[y + 1][x] != 0:
@@ -65,7 +72,7 @@ class Map:
             x += 1
         else:
             print("cant move there!")
-        self.map_layout[y][x] = 2
+        self.map_layout[y][x] += "9"
         self.player_pos = x, y
 
     def create_hall(self, pos: tuple[int, int], length: int, direction: str) -> None:
@@ -86,7 +93,7 @@ class Map:
                     x -= 1
                 case "right":
                     x += 1
-            self.map_layout[y][x] = 1
+            self.map_layout[y][x] = "1"
             self.max_room_count -= 1
         self.current_pos = (x, y)
     
@@ -130,7 +137,7 @@ class Map:
         """
         origin = randint(1, self.max_width - 1), randint(1, self.max_height - 1)
         self.player_pos = origin
-        self.map_layout[origin[1]][origin[0]] = 2
+        self.map_layout[origin[1]][origin[0]] = "19"
 
         for _ in range(4): # four branches stemming from the origin
             self.current_pos = origin
@@ -145,27 +152,38 @@ class Map:
     def crop_map(self) -> None:
         """
         crops out the unnecessary whitespace,
+        updates the map width and height and the position for the player,
         returns: None
         """
         to_remove_row: list = []
         to_remove_column = []
         for i, row in enumerate(self.map_layout):
-            if sum(row) == 0:
+            if sum(map(int, row)) == 0:
                 to_remove_row.append(i)
-        
-        for j in range(self.max_width):
-            s = 0
-            for i in range(self.max_height):
-                s += self.map_layout[i][j]
-            if s == 0:
-                to_remove_column.append(j)
         
         # goes from the back because the indexing shifts when deleting items
         for index in to_remove_row[::-1]:
             self.map_layout.pop(index)
+        self.max_height = len(self.map_layout)
+
+        for j in range(self.max_width):
+            s = 0
+            for i in range(self.max_height):
+                s += int(self.map_layout[i][j])
+            if s == 0:
+                to_remove_column.append(j)
+        
+        # see previous comment
         for index in to_remove_column[::-1]:
             for i in range(len(self.map_layout)):
                 self.map_layout[i].pop(index)
+        self.max_width = len(self.map_layout[0])
+        
+        for i, row in enumerate(self.map_layout): # finds the players initial position
+            if "19" in row:
+                column_index = row.index("19")
+                row_index = i
+        self.player_pos = (column_index, row_index)
 
     def draw_map(self) -> None:
         """
@@ -175,20 +193,33 @@ class Map:
         for row in self.map_layout:
             for i in range(3):
                 for column in row:
-                    if column == 2: # room occupied by the player
+                    if column.endswith("9"): # room occupied by the player
                         self.room_walls[1] = f"│ {self.player_sprite} │"
+                        self.player_sprite = f"{cf.colors[self.player_color]}{self.player_sprite}{cf.colors["default"]}"
+                        if column[0] == "2":
+                            self.player_sprite = f"{cf.colors[self.player_color]}{self.player_sprite}{cf.colors["dark_grey"]}"
+                    
+                    if column[0] == "1": # normal room
                         print(self.room_walls[i], end="")
-                        self.room_walls[1] = "│   │"
-                    elif column == 1:
-                        print(self.room_walls[i], end="") # normal room
-                    else:
+                    elif column[0] == "2": # explored room
+                        print(f"{cf.colors["dark_grey"]}{self.room_walls[i]}{cf.colors["default"]}", end="")
+                    elif column[0] == "0":
                         print("     ", end="") # no room
+                    self.room_walls[1] = "│   │" # defaults the content of the room (empty)
                 print()
+        print("-" * self.max_width * 5)
 
 
 #note: most impactful parameters (in order) are: max_room_count, max_map_size, density
 new_map = Map(30, 30, max_room_count = 20)
 new_map.generate_map(density=10)
 new_map.crop_map()
+new_map.move_player("up")
+new_map.draw_map()
+new_map.move_player("down")
+new_map.draw_map()
+new_map.move_player("down")
+new_map.draw_map()
+new_map.move_player("down")
 new_map.draw_map()
 #TODO: make a function that makes a map object and generates, crops a map based on the in game 'floor', scales up as the game goes on
