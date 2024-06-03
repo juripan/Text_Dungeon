@@ -33,7 +33,7 @@ def save(player: object, map: object):
     with open(r"pythoncoding\text dungeon game\saves\\" + str(datetime.now()).replace(":", "-") + ".json", "w") as f:
         json_string = json.dumps([player_info, map_info], indent=4)
         f.write(json_string) # writing it as a string cuz the formatting is prettier :)
-        #json.dump(player_info, f), could also use this
+        #json.dump(json_string, f), could also use this
     
     # gives the attributes back to the player, has to be deleted because the save doesn't work otherwise (JSON and objects dont mix)
     player_info["menu"] = menu_buffer
@@ -71,6 +71,8 @@ def load(file_name: str):
                         break
                 else:
                     print("Error: Item not found")
+    
+    player.inventory = dict(zip(inventory_objects, saved_inventory.values()))
 
     player.weapon = held_item_objects[0]
     player.armor = held_item_objects[1]
@@ -83,6 +85,3 @@ def load(file_name: str):
         player.max_health += int(player.max_health * (10/100))
         player.healthbar.update_max_health() # updates max health so the healthbar is synced up
     """
-
-    #TODO: make this read the data and change the default attributes of the map
-
