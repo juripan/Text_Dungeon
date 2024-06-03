@@ -1,15 +1,5 @@
 from color_file import colors
 
-class OverworldMenu: # TODO: make this menu, should display the movement options + the map like a pseudo gui
-    """
-    menu that shows up when playing the game / map menu
-    """
-    symbol_border: str = "─"
-    default_width: int = 50
-
-    def __init__(self) -> None:
-        pass
-
 
 class BattleMenu():
     """

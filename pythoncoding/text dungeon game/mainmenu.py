@@ -19,9 +19,9 @@ def saved_progress_menu() -> None:
             file_name = save
             load(file_name)
             break
-        else:
-            print(f"No file named or numbered {choice} in the saves directory")
-            saved_progress_menu()
+    else:
+        print(f"No file named or numbered {choice} in the saves directory")
+        saved_progress_menu()
 
 
 def display_main_menu() -> int:
@@ -51,9 +51,10 @@ def display_main_menu() -> int:
     print(">QUIT (Q)<".center(logo_width))
     choice = input(">".rjust(logo_width//2))
     if not choice: # if the player presses enter the it runs the game
-        pass
+        return 1
     elif choice.lower() == "c":
         saved_progress_menu()
+        return 1
     elif choice.lower() == "q":
         print("Are you sure?(y/n)")
         choice = input(">")
@@ -61,4 +62,3 @@ def display_main_menu() -> int:
             return 0
         else:
             return display_main_menu()
-    return 1 #gets triggered if the player wants to continue or start a new game

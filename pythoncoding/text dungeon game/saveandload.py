@@ -4,27 +4,40 @@ from datetime import datetime
 
 from character_sheet import player
 from item_sheet import every_item
-
+from healthbar import Healthbar
+from map import new_map
+from menu import BattleMenu
 
 def save(player: object, map: object):
     """
     saves content to a .json file
     creates a new one every time and names it automatically based on system time
     """
+
     player_info = player.__dict__
     player_info["weapon"] ="obj_" + player.weapon.name
     player_info["armor"] = "obj_" + player.armor.name
     player_info["shield"] = "obj_" + player.shield.name
-    # creates a new dictionary with class names instead of classes(python classes cannot be saved into the json file)
+    # creates a new dictionary with class names instead of classes(python classes cannot be saved into the JSON file)
     keynames = ["obj_" + key.name for key in player_info["inventory"].keys()]
     player_info["inventory"] = dict(zip(keynames, list(player_info["inventory"].values())))
+    menu_buffer =  player_info["menu"]
+    healthbar_buffer = player_info["healthbar"]
+
     del player_info["menu"]
     del player_info["healthbar"]
 
+
+    map_info = map.__dict__
+
     with open(r"pythoncoding\text dungeon game\saves\\" + str(datetime.now()).replace(":", "-") + ".json", "w") as f:
-        json_string = json.dumps(player_info, indent=4)
+        json_string = json.dumps([player_info, map_info], indent=4)
         f.write(json_string) # writing it as a string cuz the formatting is prettier :)
         #json.dump(player_info, f), could also use this
+    
+    # gives the attributes back to the player, has to be deleted because the save doesn't work otherwise (JSON and objects dont mix)
+    player_info["menu"] = menu_buffer
+    player_info["healthbar"] = healthbar_buffer
 
 
 def load(file_name: str):
@@ -32,9 +45,13 @@ def load(file_name: str):
     inventory_objects = []
 
     with open(r"pythoncoding\text dungeon game\saves\\" + file_name, "r") as f:
-        data: dict = json.load(f)
+        data: list[dict, dict] = json.load(f)
     
-    for key, value in data.items():
+    player.__dict__ = data[0]
+    player.healthbar = Healthbar(player, color="light_blue")
+    player.menu = BattleMenu(player)
+
+    for key, value in data[0].items():
         if isinstance(value, str) and value.startswith("obj_"): # adds all of the items in the weapon, armor, shield slots to a list
             value = value.lstrip("obj_")
             for item in every_item:
@@ -54,32 +71,18 @@ def load(file_name: str):
                         break
                 else:
                     print("Error: Item not found")
-    
-    # fills all of the player held item slots
-    player.name = data["name"]
-    player.max_health = data["max_health"]
-    player.health = data["health"]
-    player.level = data["level"]
-    player.stats = data["stats"]
 
     player.weapon = held_item_objects[0]
     player.armor = held_item_objects[1]
     player.shield = held_item_objects[2]
-    
-    # fills all of the inventory item slots
-    player.inventory = dict(zip(inventory_objects, saved_inventory.values()))
-    
-    player.shielded = data["shielded"]
-    player.vulnerable = data["vulnerable"]
-    player.money = data["money"]
-    player.experience_points = data["experience_points"]
-    player.experience_cap = data["experience_cap"]
-    player.run_success = data["run_success"]
-    
+
+    new_map.__dict__ = data[1]
+
     """
     for i in range(player.stats["vigor"]): # might not be needed here if the max hp gets saved correctly and it doesn't need to be reinitialized
         player.max_health += int(player.max_health * (10/100))
         player.healthbar.update_max_health() # updates max health so the healthbar is synced up
     """
+
     #TODO: make this read the data and change the default attributes of the map
 

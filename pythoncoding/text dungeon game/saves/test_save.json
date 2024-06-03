@@ -1,34 +1,151 @@
-{
-    "name": "Lol",
-    "max_health": 1000,
-    "health": 1000,
-    "level": 20,
-    "stats": {
-        "strength": 20,
-        "dexterity": 20,
-        "vigor": 20,
-        "agility": 20,
-        "luck": 20
+[
+    {
+        "name": "Lol",
+        "max_health": 1000,
+        "health": 1000,
+        "level": 20,
+        "stats": {
+            "strength": 20,
+            "dexterity": 20,
+            "vigor": 20,
+            "agility": 20,
+            "luck": 20
+        },
+        "weapon": "obj_Fists",
+        "armor": "obj_Iron armor",
+        "shield": "obj_No shield",
+        "inventory": {
+            "obj_Potion of healing": 3,
+            "obj_Bomb": 20,
+            "obj_Dagger": 1,
+            "obj_Iron armor": 1,
+            "obj_Iron shield": 1,
+            "obj_Bow": 3,
+            "obj_Wooden arrow": 5,
+            "obj_Leather armor": 1,
+            "obj_Flint arrow": 3,
+            "obj_Throwing knives": 10
+        },
+        "shielded": false,
+        "vulnerable": true,
+        "money": 0,
+        "experience_points": 0,
+        "experience_cap": 10,
+        "run_success": false
     },
-    "weapon": "obj_Fists",
-    "armor": "obj_Iron armor",
-    "shield": "obj_No shield",
-    "inventory": {
-        "obj_Potion of healing": 3,
-        "obj_Bomb": 20,
-        "obj_Dagger": 1,
-        "obj_Iron armor": 1,
-        "obj_Iron shield": 1,
-        "obj_Bow": 3,
-        "obj_Wooden arrow": 5,
-        "obj_Leather armor": 1,
-        "obj_Flint arrow": 3,
-        "obj_Throwing knives": 10
-    },
-    "shielded": false,
-    "vulnerable": true,
-    "money": 0,
-    "experience_points": 0,
-    "experience_cap": 10,
-    "run_success": false
-}
+    {
+        "max_room_count": 0,
+        "max_width": 9,
+        "max_height": 9,
+        "map_layout": [
+            [
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+            ],
+            [
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+            ],
+            [
+                "0",
+                "0",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1"
+            ],
+            [
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+            ],
+            [
+                "1",
+                "1",
+                "1",
+                "1",
+                "19",
+                "1",
+                "1",
+                "0",
+                "0"
+            ],
+            [
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+            ],
+            [
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+            ],
+            [
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+            ],
+            [
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+            ]
+        ],
+        "player_pos": [
+            4,
+            4
+        ],
+        "current_pos": [
+            14,
+            17
+        ],
+        "player_sprite": "\u001b[94m\u001b[94m\u001b[94mP\u001b[0m\u001b[0m\u001b[0m"
+    }
+]

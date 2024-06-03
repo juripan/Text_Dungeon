@@ -14,15 +14,17 @@ class Healthbar:
         self.current_value = entity.health
         self.color = color
     
-    def update_health(self) -> None: # used after the health changes in any way
+    def update_health(self) -> None:
         """
-        updates the health of healthbar
+        updates the health of healthbar,
+        used after the health changes in any way
         """
         self.current_value = self.entity.health
     
-    def update_max_health(self) -> None: # used when leveling up vigor
+    def update_max_health(self) -> None:
         """
-        updates the max health of healthbar
+        updates the max health of healthbar,
+        used when leveling up vigor
         """
         self.max_value = self.entity.max_health
 

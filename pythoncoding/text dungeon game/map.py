@@ -62,13 +62,13 @@ class Map:
         """
         x, y = self.player_pos
         self.map_layout[y][x] = "2"
-        if direction == "up" and y - 1 > 0 and self.map_layout[y - 1][x] != 0:
+        if direction == "w" and y > 0 and self.map_layout[y - 1][x] != "0":
             y -= 1
-        elif direction == "down" and y + 1 < self.max_height and self.map_layout[y + 1][x] != 0:
+        elif direction == "s" and y + 1 < self.max_height and self.map_layout[y + 1][x] != "0":
             y += 1
-        elif direction == "left" and x - 1 > 0 and self.map_layout[y][x - 1] != 0:
+        elif direction == "a" and x > 0 and self.map_layout[y][x - 1] != "0":
             x -= 1
-        elif direction == "right" and x + 1 < self.max_width and self.map_layout[y][x + 1] != 0:
+        elif direction == "d" and x + 1 < self.max_width and self.map_layout[y][x + 1] != "0":
             x += 1
         else:
             print("cant move there!")
@@ -211,15 +211,8 @@ class Map:
 
 
 #note: most impactful parameters (in order) are: max_room_count, max_map_size, density
+#TODO: make a function that makes a map object and generates, crops a map based on the in game 'floor', scales up as the game goes on
 new_map = Map(30, 30, max_room_count = 20)
 new_map.generate_map(density=10)
 new_map.crop_map()
-new_map.move_player("up")
-new_map.draw_map()
-new_map.move_player("down")
-new_map.draw_map()
-new_map.move_player("down")
-new_map.draw_map()
-new_map.move_player("down")
-new_map.draw_map()
-#TODO: make a function that makes a map object and generates, crops a map based on the in game 'floor', scales up as the game goes on
+
