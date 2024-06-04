@@ -3,8 +3,8 @@ from random import randint, choice
 
 from character_sheet import player, all_enemies
 
-#TODO: add enemy behavior here (AI)
-def generate_encounter(all_enemies: list) -> None:
+
+def generate_encounter(all_enemies: list) -> None: #TODO: add enemy behavior here (AI)
     """
     generates a random encounter
     1 to 3 enemies picked from the all_enemies list are added to the enemies list
@@ -52,7 +52,7 @@ def level_up(level_up_points) -> None:
             print("All of your stats are maxed out, no leveling up can be done")
             break
 
-        print("--------------------------------------")
+        print("─" * 50)
         print("Choose a stat to level up:")
         for i, stat in enumerate(player.stats):
             print(f"{i + 1}. {stat} {player.stats[stat]}")
@@ -81,6 +81,8 @@ def battle_loop() -> None:
     initial_player_level = player.level
     enemies = generate_encounter(all_enemies)
 
+    print("YOU ENCOUNTERED A FOE!")
+
     while enemies and player.health > 0: # fight continues until enemies are dead or the player is dead
         player.menu.display_battle_menu(enemies) # players turn
 
@@ -104,5 +106,5 @@ def battle_loop() -> None:
         level_up_points = player.level - initial_player_level # sets how many levels you leveled up by during the battle
         level_up(level_up_points)
     
-    print("END OF BATTLE")
+    print("BATTLE END!")
     print(f"your current exp: {player.experience_points}/{player.experience_cap}, current level: {player.level}")

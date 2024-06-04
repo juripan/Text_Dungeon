@@ -1,7 +1,7 @@
 # map / the level display and generation file
 from random import choice, randint
 import color_file as cf
-
+import battle_manager as bm
 
 class Map:
     room_walls: list[str] = ["┌───┐", "│   │", "└───┘"]
@@ -72,6 +72,12 @@ class Map:
             x += 1
         else:
             print("cant move there!")
+        
+        if self.map_layout[y][x] == "1": # player goes to an unexplored room
+            roll = randint(1, 3)
+            if roll == 1:
+                bm.battle_loop()
+        
         self.map_layout[y][x] += "9"
         self.player_pos = x, y
 

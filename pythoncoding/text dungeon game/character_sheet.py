@@ -94,8 +94,16 @@ class Player(Character):
             self.vulnerable = False
         print(f"{self.name} attempts to dodge the upcoming attack")
     
-    def use_item(self, item, target, targets): #self is the player, target is the who its used on (you or the enemy), targets is the whole encounter
-        if not isinstance(item, itm.Ammo): # checks of the item is usable
+    def use_item(self, item, target, targets): 
+        """
+        self is the player, target is the who its used on (you or the enemy), targets is the whole encounter
+        """
+        if targets is None: # checks of its triggered from the overworld menu
+            if not isinstance(item, itm.OffensiveItem):
+                item.use(self, target) # target is the player
+            else:
+                print("Please don't do that to yourself :(")
+        elif not isinstance(item, itm.Ammo): # checks of the item is usable
             if hasattr(item, "splash_damage") and item.splash_damage:
                 item.use(self, targets)
             else:
