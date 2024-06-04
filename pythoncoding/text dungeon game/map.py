@@ -7,6 +7,7 @@ class Map:
     room_walls: list[str] = ["┌───┐", "│   │", "└───┘"]
     player_sprite: str = "■"
     boss_sprite: str = "☠"  #note: the skull sprite doesn't want to cooperate (offset to the side)
+    treasure_sprite: str = "♛"
     player_color: str = "light_blue"
     current_color: str = "default"
 
@@ -14,6 +15,7 @@ class Map:
     normal_room: str = "1"
     explored_room: str = "2"
     boss_room: str = "3"
+    treasure_room: str = "4"
     player_in_room: str = "9" 
 
     def __init__(self, width, height, max_room_count) -> None:
@@ -48,11 +50,13 @@ class Map:
                 bm.battle_loop()
         elif self.map_layout[y][x] == self.boss_room:
             raise NotImplementedError("Implement bossfights") #TODO: add bossfights to the game
+        elif self.map_layout[y][x] == self.treasure_room:
+            raise NotImplementedError("Implement treasure rooms") #TODO: add treasure rooms to the game
 
         self.map_layout[y][x] += self.player_in_room
         self.player_pos = x, y
     
-    def create_boss_room(self):
+    def create_special_rooms(self):
         """
         finds the farthest room from the start and makes it into a boss room
         """
@@ -64,8 +68,25 @@ class Map:
                 if self.map_layout[y][x] != self.no_room:
                     distances.append((x, y))
         
-        boss_loc = max(distances, key=distance_metric)
-        self.map_layout[boss_loc[1]][boss_loc[0]] = "3"
+        sorted_distances = sorted(distances, key=distance_metric, reverse=True)
+        bossroom_x, bossroom_y = sorted_distances[0]
+        self.map_layout[bossroom_y][bossroom_x] = self.boss_room
+        del sorted_distances[0]
+        
+        loc: tuple = ()
+        sec_loc: tuple = ()
+
+        for distance in sorted_distances:
+            x_diff = (distance[0] - player_x) * (bossroom_x - player_x)
+            y_diff = (distance[1] - player_y) * (bossroom_y - player_y)
+            if (x_diff <= 0 or y_diff <= 0) and sec_loc == (): # tries to find one that isn't on the same x or y axis as the boss room
+                sec_loc = distance[0], distance[1]
+            if x_diff <= 0 and y_diff <= 0: # tries to find one that isn't on the same x and y axis as the boss room
+                loc = distance[0], distance[1]
+                self.map_layout[loc[1]][loc[0]] = self.treasure_room
+                break
+        else:
+            self.map_layout[sec_loc[1]][sec_loc[0]] = self.treasure_room
 
     def will_collide(self, pos: tuple[int, int], length: int, direction: str) -> bool:
         """
@@ -173,7 +194,7 @@ class Map:
             
             for new_branch in new_branches:
                 self.create_halls(new_branch, halls_count=density)
-        self.create_boss_room()
+        self.create_special_rooms()
     
     def crop_map(self) -> None:
         """
@@ -227,6 +248,9 @@ class Map:
                     elif column[0] == self.boss_room:
                         self.current_color = "red"
                         self.room_walls[1] = f"│ {self.boss_sprite} │"
+                    elif column[0] == self.treasure_room:
+                        self.current_color = "yellow"
+                        self.room_walls[1] = f"│ {self.treasure_sprite} │"
                     
                     if column.endswith(self.player_in_room):
                         self.room_walls[1] = f"│ {self.player_sprite} │"
@@ -245,5 +269,5 @@ class Map:
 #note: most impactful parameters (in order) are: max_room_count, max_map_size, density
 #TODO: make a function that makes a map object and generates, crops a map based on the in game 'floor', scales up as the game goes on
 new_map = Map(30, 30, max_room_count = 20)
-new_map.generate_map(density=10)
+new_map.generate_map(density=50)
 new_map.crop_map()
