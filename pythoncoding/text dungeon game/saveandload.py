@@ -1,4 +1,4 @@
-#TODO: add map saving and loading
+# file containing functions that save and load game state (player and map data) into a JSON file
 import json
 from datetime import datetime
 
@@ -6,7 +6,8 @@ from character_sheet import player
 from item_sheet import every_item
 from healthbar import Healthbar
 from map import new_map
-from menu import BattleMenu
+from battlemenu import BattleMenu
+
 
 def save(player: object, map: object):
     """
@@ -27,13 +28,11 @@ def save(player: object, map: object):
     del player_info["menu"]
     del player_info["healthbar"]
 
-
     map_info = map.__dict__
 
     with open(r"pythoncoding\text dungeon game\saves\\" + str(datetime.now()).replace(":", "-") + ".json", "w") as f:
         json_string = json.dumps([player_info, map_info], indent=4)
         f.write(json_string) # writing it as a string cuz the formatting is prettier :)
-        #json.dump(json_string, f), could also use this
     
     # gives the attributes back to the player, has to be deleted because the save doesn't work otherwise (JSON and objects dont mix)
     player_info["menu"] = menu_buffer
@@ -79,9 +78,3 @@ def load(file_name: str):
     player.shield = held_item_objects[2]
 
     new_map.__dict__ = data[1]
-
-    """
-    for i in range(player.stats["vigor"]): # might not be needed here if the max hp gets saved correctly and it doesn't need to be reinitialized
-        player.max_health += int(player.max_health * (10/100))
-        player.healthbar.update_max_health() # updates max health so the healthbar is synced up
-    """

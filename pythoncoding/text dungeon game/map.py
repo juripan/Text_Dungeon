@@ -1,22 +1,23 @@
 # map / the level display and generation file
 from random import choice, randint
 import color_file as cf
-import battle_manager as bm
+
 
 class Map:
     room_walls: list[str] = ["┌───┐", "│   │", "└───┘"]
-    player_sprite: str = "■"
-    boss_sprite: str = "☠"  #note: the skull sprite doesn't want to cooperate (offset to the side)
-    treasure_sprite: str = "♛"
-    player_color: str = "light_blue"
+    PLAYER_SPRITE: str = "■"
+    BOSS_SPRITE: str = "☠"  #note: the skull sprite doesn't want to cooperate (offset to the side)
+    SHOP_SPRITE: str = "$"
+    PLAYER_COLOR: str = "light_blue"
     current_color: str = "default"
 
-    no_room: str = "0"
-    normal_room: str = "1"
-    explored_room: str = "2"
-    boss_room: str = "3"
-    treasure_room: str = "4"
-    player_in_room: str = "9" 
+    NO_ROOM: str = "0" #note: whole numbers are used so they can be turned into integers in the crop_map method 
+    #TODO: maybe add an identifier that gest created on every branch so you can tell branches apart
+    NORMAL_ROOM: str = "1"
+    EXPLORED_ROOM: str = "2"
+    BOSS_ROOM: str = "3"
+    SHOP_ROOM: str = "4"
+    PLAYER_IN_ROOM: str = "9" 
 
     def __init__(self, width, height, max_room_count) -> None:
         self.max_room_count: int = max_room_count
@@ -25,68 +26,28 @@ class Map:
         self.player_pos: tuple[int, int] = ()
         self.current_pos: tuple[int, int] = ()
     
-    def move_player(self, direction: str) -> None:
+    def create_special_rooms(self) -> None:
         """
-        moves the player,
-        prints 'cant move there' if its out of the map or out of the room layout,
-        returns: None
-        """
-        x, y = self.player_pos
-        self.map_layout[y][x] = self.explored_room
-        if direction == "w" and y > 0 and self.map_layout[y - 1][x] != self.no_room:
-            y -= 1
-        elif direction == "s" and y + 1 < self.max_height and self.map_layout[y + 1][x] != self.no_room:
-            y += 1
-        elif direction == "a" and x > 0 and self.map_layout[y][x - 1] != self.no_room:
-            x -= 1
-        elif direction == "d" and x + 1 < self.max_width and self.map_layout[y][x + 1] != self.no_room:
-            x += 1
-        else:
-            print("cant move there!")
-        
-        if self.map_layout[y][x] == self.normal_room: # player goes to an unexplored room
-            roll = randint(1, 3)
-            if roll == 1:
-                bm.battle_loop()
-        elif self.map_layout[y][x] == self.boss_room:
-            raise NotImplementedError("Implement bossfights") #TODO: add bossfights to the game
-        elif self.map_layout[y][x] == self.treasure_room:
-            raise NotImplementedError("Implement treasure rooms") #TODO: add treasure rooms to the game
-
-        self.map_layout[y][x] += self.player_in_room
-        self.player_pos = x, y
-    
-    def create_special_rooms(self):
-        """
-        finds the farthest room from the start and makes it into a boss room
+        finds the farthest room from the start and makes it into a boss room,
+        finds the farthest room from the bossroom and creates a shop
         """
         player_x, player_y = self.player_pos
-        distances = []
-        distance_metric = lambda coords: (coords[0] - player_x)**2 + (coords[1] - player_y)**2
+        coords_list = []
+
         for y in range(len(self.map_layout)):
             for x in range(len(self.map_layout[0])):
-                if self.map_layout[y][x] != self.no_room:
-                    distances.append((x, y))
-        
-        sorted_distances = sorted(distances, key=distance_metric, reverse=True)
-        bossroom_x, bossroom_y = sorted_distances[0]
-        self.map_layout[bossroom_y][bossroom_x] = self.boss_room
-        del sorted_distances[0]
-        
-        loc: tuple = ()
-        sec_loc: tuple = ()
+                if self.map_layout[y][x] != self.NO_ROOM:
+                    coords_list.append((x, y))
 
-        for distance in sorted_distances:
-            x_diff = (distance[0] - player_x) * (bossroom_x - player_x)
-            y_diff = (distance[1] - player_y) * (bossroom_y - player_y)
-            if (x_diff <= 0 or y_diff <= 0) and sec_loc == (): # tries to find one that isn't on the same x or y axis as the boss room
-                sec_loc = distance[0], distance[1]
-            if x_diff <= 0 and y_diff <= 0: # tries to find one that isn't on the same x and y axis as the boss room
-                loc = distance[0], distance[1]
-                self.map_layout[loc[1]][loc[0]] = self.treasure_room
-                break
-        else:
-            self.map_layout[sec_loc[1]][sec_loc[0]] = self.treasure_room
+        player_distance_metric = lambda coords: (coords[0] - player_x)**2 + (coords[1] - player_y)**2
+        bossroom_x, bossroom_y = max(coords_list, key=player_distance_metric)
+        self.map_layout[bossroom_y][bossroom_x] = self.BOSS_ROOM
+        coords_list.remove((bossroom_x, bossroom_y))
+
+        bossroom_distance_metric = lambda coords: (coords[0] - bossroom_x)**2 + (coords[1] - bossroom_y)**2 #TODO: still bricked, puts the room in the corners sometimes
+        shop_x, shop_y = max(coords_list, key=bossroom_distance_metric)
+        self.map_layout[shop_y][shop_x] = self.SHOP_ROOM
+        coords_list.remove((shop_x, shop_y))
 
     def will_collide(self, pos: tuple[int, int], length: int, direction: str) -> bool:
         """
@@ -99,25 +60,25 @@ class Map:
             if length > y:
                 return True
             for i in range(1, length + 1):
-                if self.map_layout[y - i][x] != self.no_room:
+                if self.map_layout[y - i][x] != self.NO_ROOM:
                     return True
         elif direction == "down":
             if length >= self.max_height - y:
                 return True
             for i in range(1, length + 1):
-                if self.map_layout[y + i][x] != self.no_room:
+                if self.map_layout[y + i][x] != self.NO_ROOM:
                     return True
         elif direction == "left":
             if length > x:
                 return True
             for i in range(1, length + 1):
-                if self.map_layout[y][x - i] != self.no_room:
+                if self.map_layout[y][x - i] != self.NO_ROOM:
                     return True
         elif direction == "right":
             if length >= self.max_width - x:
                 return True
             for i in range(1, length + 1):
-                if self.map_layout[y][x + i] != self.no_room:
+                if self.map_layout[y][x + i] != self.NO_ROOM:
                     return True
         return False
 
@@ -139,7 +100,7 @@ class Map:
                     x -= 1
                 case "right":
                     x += 1
-            self.map_layout[y][x] = self.normal_room
+            self.map_layout[y][x] = self.NORMAL_ROOM
             self.max_room_count -= 1
         self.current_pos = (x, y)
     
@@ -183,7 +144,7 @@ class Map:
         """
         self.origin = randint(1, self.max_width - 1), randint(1, self.max_height - 1)
         self.player_pos = self.origin
-        self.map_layout[self.origin[1]][self.origin[0]] = self.normal_room + self.player_in_room
+        self.map_layout[self.origin[1]][self.origin[0]] = self.NORMAL_ROOM + self.PLAYER_IN_ROOM
 
         for _ in range(4): # four branches stemming from the origin
             self.current_pos = self.origin
@@ -194,7 +155,6 @@ class Map:
             
             for new_branch in new_branches:
                 self.create_halls(new_branch, halls_count=density)
-        self.create_special_rooms()
     
     def crop_map(self) -> None:
         """
@@ -226,7 +186,7 @@ class Map:
                 self.map_layout[i].pop(index)
         self.max_width = len(self.map_layout[0])
         
-        player_room_indicator = self.normal_room + self.player_in_room
+        player_room_indicator = self.NORMAL_ROOM + self.PLAYER_IN_ROOM
         for i, row in enumerate(self.map_layout): # finds the players initial position
             if player_room_indicator in row:
                 column_index = row.index(player_room_indicator)
@@ -241,22 +201,22 @@ class Map:
         for row in self.map_layout:
             for i in range(3):
                 for column in row:
-                    if column[0] == self.normal_room:
+                    if column[0] == self.NORMAL_ROOM:
                         self.current_color = "default"
-                    elif column[0] == self.explored_room:
+                    elif column[0] == self.EXPLORED_ROOM:
                         self.current_color = "dark_grey"
-                    elif column[0] == self.boss_room:
+                    elif column[0] == self.BOSS_ROOM:
                         self.current_color = "red"
-                        self.room_walls[1] = f"│ {self.boss_sprite} │"
-                    elif column[0] == self.treasure_room:
+                        self.room_walls[1] = f"│ {self.BOSS_SPRITE} │"
+                    elif column[0] == self.SHOP_ROOM:
                         self.current_color = "yellow"
-                        self.room_walls[1] = f"│ {self.treasure_sprite} │"
+                        self.room_walls[1] = f"│ {self.SHOP_SPRITE} │"
                     
-                    if column.endswith(self.player_in_room):
-                        self.room_walls[1] = f"│ {self.player_sprite} │"
-                        self.player_sprite = f"{cf.colors[self.player_color]}{self.player_sprite}{cf.colors[self.current_color]}"
+                    if column.endswith(self.PLAYER_IN_ROOM):
+                        self.room_walls[1] = f"│ {self.PLAYER_SPRITE} │"
+                        self.PLAYER_SPRITE = f"{cf.colors[self.PLAYER_COLOR]}{self.PLAYER_SPRITE}{cf.colors[self.current_color]}"
 
-                    if column[0] == self.no_room:
+                    if column[0] == self.NO_ROOM:
                         print("     ", end="")
                     else:
                         print(f"{cf.colors[self.current_color]}{self.room_walls[i]}{cf.colors["default"]}", end="")
@@ -271,3 +231,4 @@ class Map:
 new_map = Map(30, 30, max_room_count = 20)
 new_map.generate_map(density=50)
 new_map.crop_map()
+new_map.create_special_rooms()

@@ -102,6 +102,8 @@ class HealingItem(Item):
             target.health += healed
             target.health = min(target.health, target.max_health) # a barrier so you dont go over max health
             user.inventory[self] -= 1
+            if user.inventory[self] == 0:
+                user.inventory.pop(self)
             target.healthbar.update_health()
             print(f"{user.name} used {self.name}, and healed {target.name} by {healed} health")
         else:
@@ -120,6 +122,9 @@ class Ammo(Item):
             weapon.loaded = self
         elif weapon.loaded:
             user.inventory[self] -= 1
+        
+        if user.inventory[self] == 0:
+            user.inventory.pop(self)
 
 
 class OffensiveItem(Item): #note: ignores armor
@@ -141,62 +146,65 @@ class OffensiveItem(Item): #note: ignores armor
                 target.health = max(target.health, 0) # a barrier so you dont go under 0
                 target.healthbar.update_health()
                 print(f"{user.name} used {self.name}, and dealt {self.damage} damage to {target.name}")
+            
             user.inventory[self] -= 1
+            if user.inventory[self] == 0:
+                user.inventory.pop(self)
         else:
             print(f"{user.name} ran out of {self.name}")
 
 
-fists = Weapon(name="Fists", damage=10, damage_type="bludgeoning", cost=None)
+fists = Weapon(name="Fists", damage=10, damage_type="bludgeoning", cost=0)
 
-iron_sword = Weapon(name="Iron sword", damage=50, damage_type="slashing", cost=None)
+iron_sword = Weapon(name="Iron sword", damage=50, damage_type="slashing", cost=20)
 
-dagger = Weapon(name="Dagger", damage=35, damage_type="piercing", cost=None)
-
-
-bow = RangedWeapon(name="Bow", damage=40, damage_type="piercing", weapon_range="long", cost=None)
-
-short_bow = RangedWeapon(name="Short bow", damage=30, damage_type="piercing", weapon_range="mid", cost=None)
+dagger = Weapon(name="Dagger", damage=35, damage_type="piercing", cost=10)
 
 
-no_armor = Armor(name="No armor", resistance=0, cost=None)
+bow = RangedWeapon(name="Bow", damage=40, damage_type="piercing", weapon_range="long", cost=30)
 
-leather_armor = Armor(name="Leather armor", resistance=1, cost=None)
-
-chainmail_armor = Armor(name="Chainmail armor", resistance=2, cost=None)
-
-iron_armor = Armor(name="Iron armor", resistance=6, cost=None)
+short_bow = RangedWeapon(name="Short bow", damage=30, damage_type="piercing", weapon_range="mid", cost=15)
 
 
-no_shield = Shield(name="No shield", sturdiness=0, cost=None)
+no_armor = Armor(name="No armor", resistance=0, cost=0)
 
-wooden_shield = Shield(name="Wooden shield", sturdiness=2, cost=None)
+leather_armor = Armor(name="Leather armor", resistance=1, cost=10)
 
-iron_shield = Shield(name="Iron shield", sturdiness=4, cost=None)
+chainmail_armor = Armor(name="Chainmail armor", resistance=2, cost=15)
 
-
-wooden_arrow = Ammo(name="Wooden arrow", piercing=1, cost=None)
-
-flit_arrow = Ammo(name="Flint arrow", piercing=3, cost=None)
+iron_armor = Armor(name="Iron armor", resistance=6, cost=25)
 
 
-small_health = HealingItem(name="Small potion of healing", heal_amount=20, cost=None)
+no_shield = Shield(name="No shield", sturdiness=0, cost=0)
 
-medium_health = HealingItem(name="Potion of healing", heal_amount=50, cost=None)
+wooden_shield = Shield(name="Wooden shield", sturdiness=2, cost=10)
 
-big_health = HealingItem(name="Big potion of healing", heal_amount=70, cost=None)
-
-
-bomb = OffensiveItem(name="Bomb", damage=80, splash_damage=True, cost=None)
-
-dynamite = OffensiveItem(name="Stick of dynamite", damage=50, splash_damage=True, cost=None)
-
-throwing_knives = OffensiveItem(name="Throwing knives", damage=50, splash_damage=False, cost=None)
+iron_shield = Shield(name="Iron shield", sturdiness=4, cost=15)
 
 
-every_item = [fists, iron_sword, dagger, 
+wooden_arrow = Ammo(name="Wooden arrow", piercing=1, cost=1)
+
+flit_arrow = Ammo(name="Flint arrow", piercing=3, cost=3)
+
+
+small_health = HealingItem(name="Small potion of healing", heal_amount=20, cost=10)
+
+medium_health = HealingItem(name="Potion of healing", heal_amount=50, cost=20)
+
+big_health = HealingItem(name="Big potion of healing", heal_amount=70, cost=30)
+
+
+dynamite = OffensiveItem(name="Stick of dynamite", damage=50, splash_damage=True, cost=15)
+
+bomb = OffensiveItem(name="Bomb", damage=80, splash_damage=True, cost=20)
+
+throwing_knives = OffensiveItem(name="Throwing knives", damage=50, splash_damage=False, cost=5)
+
+
+every_item = (fists, iron_sword, dagger, 
               bow, short_bow, 
               no_armor, leather_armor, chainmail_armor, iron_armor, 
               no_shield, wooden_shield, iron_shield, 
               wooden_arrow, flit_arrow,
               small_health, medium_health, big_health,
-              bomb, dynamite, throwing_knives]
+              bomb, dynamite, throwing_knives)

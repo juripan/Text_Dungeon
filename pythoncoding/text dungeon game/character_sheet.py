@@ -2,7 +2,7 @@ from random import randint, choice
 
 import item_sheet as itm
 from healthbar import Healthbar
-from menu import BattleMenu
+from battlemenu import BattleMenu
 
 
 class Character():
@@ -96,7 +96,10 @@ class Player(Character):
     
     def use_item(self, item, target, targets): 
         """
-        self is the player, target is the who its used on (you or the enemy), targets is the whole encounter
+        self is the player, 
+        target is the who its used on (you or the enemy), 
+        targets is the whole encounter,
+        if targets is None then its triggered from the overworld menu
         """
         if targets is None: # checks of its triggered from the overworld menu
             if not isinstance(item, itm.OffensiveItem):
@@ -111,7 +114,12 @@ class Player(Character):
         else:
             print("You cannot use/equip this item")
 
-    def run_from_battle(self, targets): # maybe re-balance the running, its too unlikely
+    def run_from_battle(self, targets: list[object]): # maybe re-balance the running, its too unlikely
+        if isinstance(targets[0], Boss):
+            print(f"{self.name} tried run away but failed!")
+            print("can't run away from the boss!")
+            return
+        
         threshold: int = 25
         sum_target_level: int = 0
         
@@ -158,8 +166,18 @@ class Enemy(Character): #TODO: add magic / spells to the enemy and add more enem
             random_stat = choice(list(new_stats.keys()))
             new_stats[random_stat] += 1
         
-        return Enemy(name=self.name, max_health=self.max_health, level=new_level, money_dropped_on_kill=new_money_dropped_on_kill, 
-                     exp_dropped_on_kill=new_exp_dropped_on_kill, stats = new_stats)
+        return self.__class__(name=self.name, max_health=self.max_health, level=new_level, money_dropped_on_kill=new_money_dropped_on_kill, 
+                     exp_dropped_on_kill=new_exp_dropped_on_kill, stats = new_stats) # uses self.__class__ so it works with objects that inherit it (doesn't retype them to Enemy class)
+
+
+class Boss(Enemy):
+    def __init__(self, name: str, max_health: int, stats: dict, level: int = 0, inventory: dict = {}, 
+                 money_dropped_on_kill: int = 0, exp_dropped_on_kill: int = 0, special_attack_cooldown: int = 10) -> None:
+        super().__init__(name, max_health, stats, level, inventory, money_dropped_on_kill, exp_dropped_on_kill)
+        self.special_attack_cooldown: int = special_attack_cooldown # number of turns
+    
+    def special_attack(): # TODO: add special attacks
+        pass
 
 
 player = Player(name="Player", max_health=1000, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1},  level=0,
@@ -172,4 +190,13 @@ skeleton = Enemy(name="Skeleton", max_health=300, stats={"strength": 1, "dexteri
 slime = Enemy(name="Slime", max_health=200, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1},
               level=0, money_dropped_on_kill=30, exp_dropped_on_kill=30)
 
-all_enemies = [bat, skeleton, slime] # all implemented enemies are here
+slime_king = Boss(name="Slime King", max_health=500, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}, 
+                  level=0, money_dropped_on_kill=60, exp_dropped_on_kill=60, special_attack_cooldown=15)
+
+skeleton_king = Boss(name="Skeleton King", max_health=500, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}, 
+                  level=0, money_dropped_on_kill=60, exp_dropped_on_kill=60, special_attack_cooldown=15)
+
+
+all_enemies: tuple = (bat, skeleton, slime) # all implemented enemies are here
+
+all_bosses: tuple = (slime_king, skeleton_king) # all implemented bosses are here, TODO: add bosses

@@ -1,17 +1,22 @@
 #battle manager, contains and manages turns and events that occur during the battle and after it
 from random import randint, choice
 
-from character_sheet import player, all_enemies
+from character_sheet import player, all_enemies, all_bosses
 
 
-def generate_encounter(all_enemies: list) -> None: #TODO: add enemy behavior here (AI)
+def generate_encounter(all_enemies: tuple, boss: bool = False) -> None: #TODO: add enemy behavior here (AI)
     """
-    generates a random encounter
-    1 to 3 enemies picked from the all_enemies list are added to the enemies list
+    generates a random encounter,
+    1 to 3 enemies picked from the all_enemies list are added to the enemies list,
+    if boss == True then generates 1 random boss
     """
     enemies: list[object] = []
     copy_count: int = 0
-    encounter_amount = randint(1, 3) # amount of enemies that will be "spawned"
+    if boss:
+        encounter_amount = 1
+    else:
+        encounter_amount = randint(1, 3) # amount of enemies that will be "spawned"
+    
     for _ in range(encounter_amount):
         random_enemy = choice(all_enemies)
         new_enemy = random_enemy.deepcopy() # creates a deep copy of an enemy object
@@ -55,7 +60,7 @@ def level_up(level_up_points) -> None:
         print("─" * 50)
         print("Choose a stat to level up:")
         for i, stat in enumerate(player.stats):
-            print(f"{i + 1}. {stat} {player.stats[stat]}")
+            print(f"{i + 1}. {stat}: {player.stats[stat]}")
         
         choice = input(">").lower()
 
@@ -74,15 +79,19 @@ def level_up(level_up_points) -> None:
             return level_up(level_up_points)
 
 
-def battle_loop() -> None:
+def battle_loop(boss: bool = False) -> None:
     """
     starts the battle and manages all of the battle events in its while loop
     """
     initial_player_level = player.level
-    enemies = generate_encounter(all_enemies)
 
-    print("YOU ENCOUNTERED A FOE!")
-
+    if not boss:
+        enemies: list[object] = generate_encounter(all_enemies)
+        print("YOU ENCOUNTERED A FOE!")
+    else:
+        enemies: list[object] = generate_encounter(all_bosses, boss = True)
+        print("YOU ENCOUNTERED A BOSS!")
+    
     while enemies and player.health > 0: # fight continues until enemies are dead or the player is dead
         player.menu.display_battle_menu(enemies) # players turn
 
@@ -102,9 +111,11 @@ def battle_loop() -> None:
 
         levelup_check() # checks if the player leveled up
     
+    print("─" * 50)
     if player.health != 0:
+        print("YOU WON!".center(50))
         level_up_points = player.level - initial_player_level # sets how many levels you leveled up by during the battle
         level_up(level_up_points)
-    
-    print("BATTLE END!")
-    print(f"your current exp: {player.experience_points}/{player.experience_cap}, current level: {player.level}")
+        print(f"your current exp: {player.experience_points}/{player.experience_cap}, current level: {player.level}")
+    else:
+        print("YOU DIED!".center(50))

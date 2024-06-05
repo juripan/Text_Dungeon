@@ -11,7 +11,6 @@ def main():
     
     while player_health != 0:
         player_health = display_overworld_menu()
-    print("You died!")
 
 if __name__=="__main__":
     main()
