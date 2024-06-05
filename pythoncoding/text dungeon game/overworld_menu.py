@@ -31,18 +31,20 @@ def buy_menu():
     shop_content: dict[object, int] = {key: randint(1, 6) for key in keys}
 
     while shop_content:
-        print("Which item would you like to buy? (exit or ..)")
+        print("Which item would you like to buy? (back or ..)")
         print(f"Your money: {player.money} gold")
 
         longest_item_len = len(max(shop_content.keys(), key=lambda x: len(x.name)).name)
-        formatting_string = "{:<" + str(longest_item_len) + "} {:<15} {:<10}"
+        formatting_string = "{:<2} {:<" + str(longest_item_len) + "} {:>6} {:>10}"
 
-        print(formatting_string.format('Name','Amount','Value in gold'))
+        print("─" * 50)
+        print(formatting_string.format("id", 'Name', 'Amount', 'Value(g)'))
         for i, key_value in enumerate(shop_content.items()):
-            print(i + 1, formatting_string.format(key_value[0].name, key_value[1], int(key_value[0].cost), "gold"))
+            print(formatting_string.format(i + 1, key_value[0].name, key_value[1], str(key_value[0].cost) + " gold"))
+        print("─" * 50)
         choice = input(">").lower()
 
-        if choice == "exit" or choice == "..":
+        if choice == "back" or choice == "..":
             break
 
         for i, key in enumerate(shop_content.keys()):
@@ -57,6 +59,7 @@ def buy_menu():
 def sell_item(item: object, sell_percentage_value: int):
         if player.inventory[item] == 0:
             print("you dont have that item")
+            return
         money_earned = int(item.cost * (sell_percentage_value / 100))
         player.inventory[item] -= 1
         if player.inventory[item] == 0:
@@ -70,11 +73,13 @@ def sell_menu():
         print("Which item would you like to sell? (exit or ..)")
         print(f"Your money: {player.money} gold")
         longest_item_len = len(max(player.inventory.keys(), key=lambda x: len(x.name)).name)
-        formatting_string = "{:<" + str(longest_item_len) + "} {:<15} {:<10}"
+        formatting_string = "{:<2} {:<" + str(longest_item_len) + "} {:^10} {:>2}"
 
-        print(formatting_string.format('Name','Amount','Value in gold'))
+        print("─" * 50)
+        print(formatting_string.format("id", 'Name', 'Amount', 'Value(g)'))
         for i, key_value in enumerate(player.inventory.items()):
-            print(i + 1, formatting_string.format(key_value[0].name, key_value[1], int(key_value[0].cost * (sell_percentage_value / 100))), "gold")
+            print(formatting_string.format(i + 1, key_value[0].name, key_value[1], str(int(key_value[0].cost * (sell_percentage_value / 100))) + " gold"))
+        print("─" * 50)
         choice = input(">").lower()
 
         if choice == "exit" or choice == "..":
@@ -102,13 +107,13 @@ def shop_menu() -> None:
     print("│Welcome to the shop! How may I help you?│")
     print("└────────────────────────────────────────┘")
     print(SHOPKEEPER_SPRITE.center(SIGN_WIDTH))
-    print(">BUY    >SELL    >EXIT")
+    print(">BUY    >SELL    >BACK")
     choice = input(">").lower()
     if choice == "buy":
         buy_menu()
     elif choice == "sell":
         sell_menu()
-    elif choice == "exit" or choice == "..":
+    elif choice == "back" or choice == "..":
         print("Goodbye!")
     else:
         print("Not included in the list of commands")
@@ -122,7 +127,7 @@ def move_player(map_object: Map, direction: str) -> int | None:
         returns: None
         """
         x, y = map_object.player_pos
-        if map_object.map_layout[y][x] == map_object.NORMAL_ROOM + map_object.PLAYER_IN_ROOM:
+        if map_object.map_layout[y][x][0] in (map_object.NORMAL_ROOM, map_object.BOSS_ROOM):
             map_object.map_layout[y][x] = map_object.EXPLORED_ROOM
         else:
             map_object.map_layout[y][x] = map_object.map_layout[y][x][0]
@@ -149,6 +154,7 @@ def move_player(map_object: Map, direction: str) -> int | None:
             bm.battle_loop(boss=True)
         elif map_object.map_layout[y][x][0] == map_object.SHOP_ROOM:
             shop_menu()
+
 
 def overworld_inv_menu(player):
     """
