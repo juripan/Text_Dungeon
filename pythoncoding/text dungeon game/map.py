@@ -1,6 +1,6 @@
 # map / the level display and generation file
 from random import choice, randint
-import color_file as cf
+from color_file import colors
 
 
 class Map:
@@ -11,18 +11,23 @@ class Map:
     PLAYER_COLOR: str = "light_blue"
     current_color: str = "default"
 
-    NO_ROOM: str = "0" #note: whole numbers are used so they can be turned into integers in the crop_map method 
+    #note: whole numbers are used so they can be turned into integers in the crop_map method 
     #TODO: maybe add an identifier that gest created on every branch so you can tell branches apart
+    #room types
+    NO_ROOM: str = "00"
     NORMAL_ROOM: str = "1"
-    EXPLORED_ROOM: str = "2"
-    BOSS_ROOM: str = "3"
-    SHOP_ROOM: str = "4"
-    PLAYER_IN_ROOM: str = "9" 
+    BOSS_ROOM: str = "2"
+    SHOP_ROOM: str = "3"
+    PLAYER_IN_ROOM: str = "9"
+
+    #room states
+    EXPLORED_ROOM: str = "1"
+    UNEXPLORED_ROOM: str = "2"
 
     def __init__(self, width, height, max_room_count) -> None:
         self.max_room_count: int = max_room_count
         self.max_width, self.max_height = width, height
-        self.map_layout: list[list[str]] = [["0" for _ in range(self.max_width)] for _ in range(self.max_height)]
+        self.map_layout: list[list[str]] = [[self.NO_ROOM for _ in range(self.max_width)] for _ in range(self.max_height)]
         self.player_pos: tuple[int, int] = ()
         self.current_pos: tuple[int, int] = ()
     
@@ -41,12 +46,12 @@ class Map:
 
         player_distance_metric = lambda coords: (coords[0] - player_x)**2 + (coords[1] - player_y)**2
         bossroom_x, bossroom_y = max(coords_list, key=player_distance_metric)
-        self.map_layout[bossroom_y][bossroom_x] = self.BOSS_ROOM
+        self.map_layout[bossroom_y][bossroom_x] = self.BOSS_ROOM + self.UNEXPLORED_ROOM
         coords_list.remove((bossroom_x, bossroom_y))
 
         bossroom_distance_metric = lambda coords: (coords[0] - bossroom_x)**2 + (coords[1] - bossroom_y)**2 #TODO: still bricked, puts the room in the corners sometimes
         shop_x, shop_y = max(coords_list, key=bossroom_distance_metric)
-        self.map_layout[shop_y][shop_x] = self.SHOP_ROOM
+        self.map_layout[shop_y][shop_x] = self.SHOP_ROOM + self.UNEXPLORED_ROOM
         coords_list.remove((shop_x, shop_y))
 
     def will_collide(self, pos: tuple[int, int], length: int, direction: str) -> bool:
@@ -100,7 +105,7 @@ class Map:
                     x -= 1
                 case "right":
                     x += 1
-            self.map_layout[y][x] = self.NORMAL_ROOM
+            self.map_layout[y][x] = self.NORMAL_ROOM + self.UNEXPLORED_ROOM
             self.max_room_count -= 1
         self.current_pos = (x, y)
     
@@ -144,7 +149,7 @@ class Map:
         """
         self.origin = randint(1, self.max_width - 1), randint(1, self.max_height - 1)
         self.player_pos = self.origin
-        self.map_layout[self.origin[1]][self.origin[0]] = self.NORMAL_ROOM + self.PLAYER_IN_ROOM
+        self.map_layout[self.origin[1]][self.origin[0]] = self.NORMAL_ROOM + self.UNEXPLORED_ROOM + self.PLAYER_IN_ROOM
 
         for _ in range(4): # four branches stemming from the origin
             self.current_pos = self.origin
@@ -186,7 +191,7 @@ class Map:
                 self.map_layout[i].pop(index)
         self.max_width = len(self.map_layout[0])
         
-        player_room_indicator = self.NORMAL_ROOM + self.PLAYER_IN_ROOM
+        player_room_indicator = self.NORMAL_ROOM + self.UNEXPLORED_ROOM + self.PLAYER_IN_ROOM
         for i, row in enumerate(self.map_layout): # finds the players initial position
             if player_room_indicator in row:
                 column_index = row.index(player_room_indicator)
@@ -201,11 +206,12 @@ class Map:
         for row in self.map_layout:
             for i in range(3):
                 for column in row:
-                    if column[0] == self.NORMAL_ROOM:
-                        self.current_color = "default"
-                    elif column[0] == self.EXPLORED_ROOM:
+                    if column[1] == self.UNEXPLORED_ROOM:
                         self.current_color = "dark_grey"
-                    elif column[0] == self.BOSS_ROOM:
+                    elif column[1] == self.EXPLORED_ROOM:
+                        self.current_color = "default"
+                    
+                    if column[0] == self.BOSS_ROOM:
                         self.current_color = "red"
                         self.room_walls[1] = f"│ {self.BOSS_SPRITE} │"
                     elif column[0] == self.SHOP_ROOM:
@@ -214,12 +220,12 @@ class Map:
                     
                     if column.endswith(self.PLAYER_IN_ROOM):
                         self.room_walls[1] = f"│ {self.PLAYER_SPRITE} │"
-                        self.PLAYER_SPRITE = f"{cf.colors[self.PLAYER_COLOR]}{self.PLAYER_SPRITE}{cf.colors[self.current_color]}"
+                        self.PLAYER_SPRITE = f"{colors[self.PLAYER_COLOR]}{self.PLAYER_SPRITE}{colors[self.current_color]}"
 
-                    if column[0] == self.NO_ROOM:
+                    if column == self.NO_ROOM:
                         print("     ", end="")
                     else:
-                        print(f"{cf.colors[self.current_color]}{self.room_walls[i]}{cf.colors["default"]}", end="")
+                        print(f"{colors[self.current_color]}{self.room_walls[i]}{colors["default"]}", end="")
                     
                     self.room_walls[1] = "│   │" # resets the content of the room (empty)
                 print()

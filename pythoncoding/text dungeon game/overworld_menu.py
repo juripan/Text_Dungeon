@@ -6,7 +6,20 @@ import battle_manager as bm
 import item_sheet as itm
 
 
-def buy_item(item, shop_content):
+def next_floor():
+    """
+    TODO: 
+    generates the floors shop,
+    generates the new map,
+    """
+    print("Do you want to move to the next floor?(y/n)")
+    print("(note: you cant come back here if you leave)")
+    choice = input(">").lower()
+    if choice == "y":
+        raise NotImplementedError("Implement multiple floors smh")
+
+
+def buy_item(item: itm.Item, shop_content: dict) -> None:
     if item.cost <= player.money:
         if player.inventory.get(item) is None:
             player.inventory[item] = 0
@@ -22,20 +35,20 @@ def buy_item(item, shop_content):
         print("You dont have enough money to buy this item")
 
 
-def buy_menu():
+def buy_menu() -> None:
     #TODO: generate this before the function gets called, one shop stock per floor
     NUMBER_OF_ITEMS: int = 6
     sellable_items: list = [item for item in itm.every_item if item.cost != 0]
-    keys: list[object] = choices(sellable_items, k=NUMBER_OF_ITEMS)
+    keys: list[itm.Item] = choices(sellable_items, k=NUMBER_OF_ITEMS)
 
-    shop_content: dict[object, int] = {key: randint(1, 6) for key in keys}
+    shop_content: dict[itm.Item, int] = {key: randint(1, 6) for key in keys}
 
     while shop_content:
         print("Which item would you like to buy? (back or ..)")
         print(f"Your money: {player.money} gold")
 
-        longest_item_len = len(max(shop_content.keys(), key=lambda x: len(x.name)).name)
-        formatting_string = "{:<2} {:<" + str(longest_item_len) + "} {:>6} {:>10}"
+        longest_item_len: int = len(max(shop_content.keys(), key=lambda x: len(x.name)).name)
+        formatting_string: str = "{:<2} {:<" + str(longest_item_len) + "} {:>6} {:>10}"
 
         print("─" * 50)
         print(formatting_string.format("id", 'Name', 'Amount', 'Value(g)'))
@@ -56,7 +69,7 @@ def buy_menu():
     shop_menu()
 
 
-def sell_item(item: object, sell_percentage_value: int):
+def sell_item(item: object, sell_percentage_value: int) -> None:
         if player.inventory[item] == 0:
             print("you dont have that item")
             return
@@ -67,7 +80,7 @@ def sell_item(item: object, sell_percentage_value: int):
         player.money += money_earned
 
 
-def sell_menu():
+def sell_menu() -> None:
     sell_percentage_value: int = 80
     while player.inventory:
         print("Which item would you like to sell? (exit or ..)")
@@ -96,8 +109,8 @@ def sell_menu():
 
 def shop_menu() -> None:
     """
-    shows the shop menu nad handles the inputs,
-    returns None
+    shows the shop menu and handles the inputs,
+    returns: None
     """
     MESSAGE = "Welcome to the shop! How may I help you?"
     SHOPKEEPER_SPRITE = "(*-*)│"
@@ -109,9 +122,9 @@ def shop_menu() -> None:
     print(SHOPKEEPER_SPRITE.center(SIGN_WIDTH))
     print(">BUY    >SELL    >BACK")
     choice = input(">").lower()
-    if choice == "buy":
+    if choice == "buy" or choice == "1":
         buy_menu()
-    elif choice == "sell":
+    elif choice == "sell" or choice == "2":
         sell_menu()
     elif choice == "back" or choice == "..":
         print("Goodbye!")
@@ -120,7 +133,7 @@ def shop_menu() -> None:
         shop_menu()
 
 
-def move_player(map_object: Map, direction: str) -> int | None:
+def move_player(map_object: Map, direction: str) -> None:
         """
         moves the player,
         prints 'cant move there' if its out of the map or out of the room layout,
@@ -128,9 +141,9 @@ def move_player(map_object: Map, direction: str) -> int | None:
         """
         x, y = map_object.player_pos
         if map_object.map_layout[y][x][0] in (map_object.NORMAL_ROOM, map_object.BOSS_ROOM):
-            map_object.map_layout[y][x] = map_object.EXPLORED_ROOM
+            map_object.map_layout[y][x] = map_object.map_layout[y][x][0] + map_object.EXPLORED_ROOM
         else:
-            map_object.map_layout[y][x] = map_object.map_layout[y][x][0]
+            map_object.map_layout[y][x] = map_object.map_layout[y][x][:2]
         
         if direction == "w" and y > 0 and map_object.map_layout[y - 1][x] != map_object.NO_ROOM:
             y -= 1
@@ -146,12 +159,17 @@ def move_player(map_object: Map, direction: str) -> int | None:
         map_object.map_layout[y][x] += map_object.PLAYER_IN_ROOM
         map_object.player_pos = x, y
 
-        if map_object.map_layout[y][x][0] == map_object.NORMAL_ROOM: # player goes to an unexplored room
+
+        if map_object.map_layout[y][x][:2] == map_object.NORMAL_ROOM + map_object.UNEXPLORED_ROOM: # player goes to an unexplored room
             roll = randint(1, 3)
             if roll == 1:
                 bm.battle_loop(boss=False)
+            map_object.map_layout[y][x] = map_object.NORMAL_ROOM + map_object.EXPLORED_ROOM + map_object.PLAYER_IN_ROOM
         elif map_object.map_layout[y][x][0] == map_object.BOSS_ROOM:
-            bm.battle_loop(boss=True)
+            if map_object.map_layout[y][x][1] == map_object.UNEXPLORED_ROOM:
+                bm.battle_loop(boss=True)
+            else:
+                next_floor()
         elif map_object.map_layout[y][x][0] == map_object.SHOP_ROOM:
             shop_menu()
 

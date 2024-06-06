@@ -3,6 +3,7 @@ from random import randint, choice
 import item_sheet as itm
 from healthbar import Healthbar
 from battlemenu import BattleMenu
+from color_file import colors
 
 
 class Character():
@@ -40,7 +41,7 @@ class Character():
         roll = randint(1, 100 - 5 * self.stats["luck"] + 1) # max luck stat is 20, 21 throws an error
         if roll == 1: # critical hit, ignores armor and shielding
             attack_damage = int((self.weapon.damage + self.weapon.damage * (modifier * 5 / 100)) * 3)
-            added_message = ", critical hit!"
+            added_message = f", {colors["yellow"]}critical hit!{colors["default"]}"
         else:
             attack_damage = int((self.weapon.damage + self.weapon.damage * (modifier * 5 / 100)) * ((100 - other.armor.resistance * 5) / 100)) # calculates damage based on armor
             if other.shielded:
@@ -50,7 +51,7 @@ class Character():
         other.health -= attack_damage
         other.health = max(other.health, 0) # a barrier so you dont go under 0
         other.healthbar.update_health()
-        print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {attack_damage} damage" + added_message)
+        print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {colors["red"]}{attack_damage} damage{colors["default"]}" + added_message)
     
     def attack(self, other):
         if not other.vulnerable:

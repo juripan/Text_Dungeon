@@ -1,6 +1,8 @@
 # file containing functions that save and load game state (player and map data) into a JSON file
+# TODO: should save other things about the map (shop stock) and the floor number in the future (when multiple floors wil be implemented)
 import json
 from datetime import datetime
+from copy import deepcopy
 
 from character_sheet import player
 from item_sheet import every_item
@@ -15,28 +17,25 @@ def save(player: object, map: object):
     creates a new one every time and names it automatically based on system time
     """
 
-    player_info = player.__dict__
+    player_info = deepcopy(player.__dict__)
     player_info["weapon"] ="obj_" + player.weapon.name
     player_info["armor"] = "obj_" + player.armor.name
     player_info["shield"] = "obj_" + player.shield.name
     # creates a new dictionary with class names instead of classes(python classes cannot be saved into the JSON file)
     keynames = ["obj_" + key.name for key in player_info["inventory"].keys()]
     player_info["inventory"] = dict(zip(keynames, list(player_info["inventory"].values())))
-    menu_buffer =  player_info["menu"]
-    healthbar_buffer = player_info["healthbar"]
 
     del player_info["menu"]
     del player_info["healthbar"]
 
     map_info = map.__dict__
+    del map_info["PLAYER_SPRITE"] # can be deleted, will be reinitialized by the Map itself
+    del map_info["current_color"]
 
     with open(r"pythoncoding\text dungeon game\saves\\" + str(datetime.now()).replace(":", "-") + ".json", "w") as f:
         json_string = json.dumps([player_info, map_info], indent=4)
         f.write(json_string) # writing it as a string cuz the formatting is prettier :)
     
-    # gives the attributes back to the player, has to be deleted because the save doesn't work otherwise (JSON and objects dont mix)
-    player_info["menu"] = menu_buffer
-    player_info["healthbar"] = healthbar_buffer
 
 
 def load(file_name: str):

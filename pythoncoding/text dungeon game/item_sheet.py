@@ -1,4 +1,6 @@
 # add more items like potions
+from color_file import colors
+
 
 class Item():
     """
@@ -105,7 +107,7 @@ class HealingItem(Item):
             if user.inventory[self] == 0:
                 user.inventory.pop(self)
             target.healthbar.update_health()
-            print(f"{user.name} used {self.name}, and healed {target.name} by {healed} health")
+            print(f"{user.name} used {self.name}, and healed {target.name} by {colors["green"]}{healed} health{colors["default"]}")
         else:
             print(f"{user.name} ran out of {self.name}")
 
@@ -140,7 +142,7 @@ class OffensiveItem(Item): #note: ignores armor
                     enemy.health -= self.damage
                     enemy.health = max(enemy.health, 0) # a barrier so you dont go under 0
                     enemy.healthbar.update_health()
-                    print(f"{user.name} used {self.name}, and dealt {self.damage} damage to {enemy.name}!")
+                    print(f"{user.name} used {self.name}, and dealt {colors["red"]}{self.damage} damage{colors["default"]} to {enemy.name}!")
             else:
                 target.health -= self.damage
                 target.health = max(target.health, 0) # a barrier so you dont go under 0
