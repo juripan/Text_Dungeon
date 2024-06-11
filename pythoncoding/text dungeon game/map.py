@@ -11,8 +11,7 @@ class Map:
     PLAYER_COLOR: str = "light_blue"
     current_color: str = "default"
 
-    #note: whole numbers are used so they can be turned into integers in the crop_map method 
-    #TODO: maybe add an identifier that gest created on every branch so you can tell branches apart
+    #note: whole numbers are used so they can be turned into integers in the crop_map method
     #room types
     NO_ROOM: str = "00"
     NORMAL_ROOM: str = "1"
@@ -24,7 +23,7 @@ class Map:
     EXPLORED_ROOM: str = "1"
     UNEXPLORED_ROOM: str = "2"
 
-    def __init__(self, width, height, max_room_count) -> None:
+    def __init__(self, width: int, height: int, max_room_count: int) -> None:
         self.max_room_count: int = max_room_count
         self.max_width, self.max_height = width, height
         self.map_layout: list[list[str]] = [[self.NO_ROOM for _ in range(self.max_width)] for _ in range(self.max_height)]
@@ -232,9 +231,5 @@ class Map:
         print("-" * self.max_width * 5)
 
 
-#note: most impactful parameters (in order) are: max_room_count, max_map_size, density
-#TODO: make a function that makes a map object and generates, crops a map based on the in game 'floor', scales up as the game goes on
-new_map = Map(30, 30, max_room_count = 20)
-new_map.generate_map(density=50)
-new_map.crop_map()
-new_map.create_special_rooms()
+floor_counter: int = 1
+current_map: Map = Map(0, 0, 0)

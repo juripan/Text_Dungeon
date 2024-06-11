@@ -1,4 +1,3 @@
-# add more items like potions
 from color_file import colors
 
 
@@ -147,7 +146,7 @@ class OffensiveItem(Item): #note: ignores armor
                 target.health -= self.damage
                 target.health = max(target.health, 0) # a barrier so you dont go under 0
                 target.healthbar.update_health()
-                print(f"{user.name} used {self.name}, and dealt {self.damage} damage to {target.name}")
+                print(f"{user.name} used {self.name}, and dealt {colors["red"]}{self.damage} damage{colors["default"]} to {target.name}!")
             
             user.inventory[self] -= 1
             if user.inventory[self] == 0:
@@ -186,7 +185,7 @@ iron_shield = Shield(name="Iron shield", sturdiness=4, cost=15)
 
 wooden_arrow = Ammo(name="Wooden arrow", piercing=1, cost=1)
 
-flit_arrow = Ammo(name="Flint arrow", piercing=3, cost=3)
+flint_arrow = Ammo(name="Flint arrow", piercing=3, cost=3)
 
 
 small_health = HealingItem(name="Small potion of healing", heal_amount=20, cost=10)
@@ -203,10 +202,22 @@ bomb = OffensiveItem(name="Bomb", damage=80, splash_damage=True, cost=20)
 throwing_knives = OffensiveItem(name="Throwing knives", damage=50, splash_damage=False, cost=5)
 
 
-every_item = (fists, iron_sword, dagger, 
+every_item: tuple = (fists, iron_sword, dagger, 
               bow, short_bow, 
               no_armor, leather_armor, chainmail_armor, iron_armor, 
               no_shield, wooden_shield, iron_shield, 
-              wooden_arrow, flit_arrow,
+              wooden_arrow, flint_arrow,
               small_health, medium_health, big_health,
-              bomb, dynamite, throwing_knives)
+              bomb, dynamite, throwing_knives
+              )
+
+consumables: tuple = (wooden_arrow, flint_arrow,
+               small_health, medium_health, big_health,
+               bomb, dynamite, throwing_knives
+               )
+
+equipables: tuple = (iron_sword, dagger, 
+              bow, short_bow, 
+              leather_armor, chainmail_armor, iron_armor, 
+              wooden_shield, iron_shield
+              )

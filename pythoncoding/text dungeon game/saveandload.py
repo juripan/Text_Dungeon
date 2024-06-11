@@ -1,5 +1,5 @@
 # file containing functions that save and load game state (player and map data) into a JSON file
-# TODO: should save other things about the map (shop stock) and the floor number in the future (when multiple floors wil be implemented)
+# TODO: make it save other things about the map (shop stock) and the floor number
 import json
 from datetime import datetime
 from copy import deepcopy
@@ -7,7 +7,7 @@ from copy import deepcopy
 from character_sheet import player
 from item_sheet import every_item
 from healthbar import Healthbar
-from map import new_map
+from map import current_map
 from battlemenu import BattleMenu
 
 
@@ -76,4 +76,4 @@ def load(file_name: str):
     player.armor = held_item_objects[1]
     player.shield = held_item_objects[2]
 
-    new_map.__dict__ = data[1]
+    current_map.__dict__ = data[1]

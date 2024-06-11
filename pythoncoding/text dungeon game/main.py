@@ -1,6 +1,6 @@
 # main file used for running the whole project
 import mainmenu as mm
-from overworld_menu import display_overworld_menu
+from overworld_menu import display_main_gui
 
 
 def main():
@@ -10,7 +10,7 @@ def main():
         return
     
     while player_health != 0:
-        player_health = display_overworld_menu()
+        player_health = display_main_gui() # main game loop
 
 if __name__=="__main__":
     main()

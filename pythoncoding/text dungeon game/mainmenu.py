@@ -62,3 +62,6 @@ def display_main_menu() -> int:
             return 0
         else:
             return display_main_menu()
+    else:
+        print("invalid command")
+        return display_main_menu()

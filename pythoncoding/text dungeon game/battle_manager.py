@@ -2,6 +2,7 @@
 from random import randint, choice
 
 from character_sheet import player, all_enemies, all_bosses
+from color_file import colors
 
 
 def generate_encounter(all_enemies: tuple, boss: bool = False) -> None: #TODO: add enemy behavior here (AI)
@@ -68,7 +69,7 @@ def level_up(level_up_points) -> None:
             if choice == stat.lower() or choice == str(i + 1) and player.stats[stat] != 20: # max possible stat value should be 20
                 player.stats[stat] += 1
                 level_up_points -= 1
-                print(f"You leveled up {stat}!")
+                print(f"You leveled up {colors["yellow"]}{stat}!{colors["default"]}")
 
                 if stat == "vigor": # raises players hp for every vigor point the player added
                     player.max_health += int(player.max_health * (10/100))
@@ -87,10 +88,10 @@ def battle_loop(boss: bool = False) -> None:
 
     if not boss:
         enemies: list[object] = generate_encounter(all_enemies)
-        print("YOU ENCOUNTERED A FOE!")
+        print(f"{colors["yellow"]}YOU ENCOUNTERED A FOE!{colors["default"]}")
     else:
         enemies: list[object] = generate_encounter(all_bosses, boss = True)
-        print("YOU ENCOUNTERED A BOSS!")
+        print(f"{colors["yellow"]}YOU ENCOUNTERED A BOSS!{colors["default"]}")
     
     while enemies and player.health > 0: # fight continues until enemies are dead or the player is dead
         player.menu.display_battle_menu(enemies) # players turn

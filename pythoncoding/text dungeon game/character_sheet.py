@@ -51,7 +51,7 @@ class Character():
         other.health -= attack_damage
         other.health = max(other.health, 0) # a barrier so you dont go under 0
         other.healthbar.update_health()
-        print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {colors["red"]}{attack_damage} damage{colors["default"]}" + added_message)
+        print(f"{self.name} attacked {other.name} with {self.weapon.name}, {other.name} took {colors["red"]}{attack_damage} damage" + added_message + colors["default"])
     
     def attack(self, other):
         if not other.vulnerable:
@@ -182,7 +182,7 @@ class Boss(Enemy):
 
 
 player = Player(name="Player", max_health=1000, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1},  level=0,
-                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1, itm.bow: 1, itm.wooden_arrow: 5, itm.leather_armor: 1, itm.flit_arrow: 3, itm.throwing_knives: 5})
+                inventory={itm.small_health: 3, itm.bomb: 3, itm.dagger: 1, itm.iron_armor: 1, itm.iron_shield: 1, itm.bow: 1, itm.wooden_arrow: 5, itm.leather_armor: 1, itm.flint_arrow: 3, itm.throwing_knives: 5})
 
 bat = Enemy(name="Bat", max_health=100, stats={"strength": 1, "dexterity": 1, "vigor": 1, "agility": 1, "luck": 1}, 
             level=0, money_dropped_on_kill=20, exp_dropped_on_kill=20)
@@ -200,4 +200,4 @@ skeleton_king = Boss(name="Skeleton King", max_health=500, stats={"strength": 1,
 
 all_enemies: tuple = (bat, skeleton, slime) # all implemented enemies are here
 
-all_bosses: tuple = (slime_king, skeleton_king) # all implemented bosses are here, TODO: add bosses
+all_bosses: tuple = (slime_king, skeleton_king) # all implemented bosses are here
