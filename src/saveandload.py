@@ -4,14 +4,14 @@ import json
 from datetime import datetime
 from copy import deepcopy
 
-from character_sheet import player
+from character_sheet import player, Player
 from item_sheet import every_item
 from healthbar import Healthbar
-from map import current_map
+from map import current_map, Map
 from battlemenu import BattleMenu
 
 
-def save(player: object, map: object):
+def save(player: Player, map: Map):
     """
     saves content to a .json file
     creates a new one every time and names it automatically based on system time
@@ -32,7 +32,7 @@ def save(player: object, map: object):
     del map_info["PLAYER_SPRITE"] # can be deleted, will be reinitialized by the Map itself
     del map_info["current_color"]
 
-    with open(r"pythoncoding\text dungeon game\saves\\" + str(datetime.now()).replace(":", "-") + ".json", "w") as f:
+    with open("saves\\" + str(datetime.now()).replace(":", "-") + ".json", "w") as f:
         json_string = json.dumps([player_info, map_info], indent=4)
         f.write(json_string) # writing it as a string cuz the formatting is prettier :)
     
@@ -42,7 +42,7 @@ def load(file_name: str):
     held_item_objects = []
     inventory_objects = []
 
-    with open(r"pythoncoding\text dungeon game\saves\\" + file_name, "r") as f:
+    with open("saves\\" + file_name, "r") as f:
         data: list[dict, dict] = json.load(f)
     
     player.__dict__ = data[0]

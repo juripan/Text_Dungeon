@@ -1,7 +1,7 @@
 # this file manages the overworld map gui and shop gui and functions like buying and selling and the generation of the next floor
 from random import randint, choices
 
-from character_sheet import player
+from character_sheet import player, Player
 from saveandload import save
 from map import Map, current_map, floor_counter
 import battle_manager as bm
@@ -92,7 +92,7 @@ def buy_menu(shop_content: dict) -> None:
     shop_menu()
 
 
-def sell_item(item: object, sell_percentage_value: int) -> None:
+def sell_item(item: itm.Item, sell_percentage_value: int) -> None:
         if player.inventory[item] == 0:
             print("you dont have that item")
             return
@@ -197,7 +197,7 @@ def move_player(map_object: Map, direction: str) -> None:
             shop_menu()
 
 
-def overworld_inv_menu(player):
+def overworld_inv_menu(player: Player):
     """
     displays every item in inventory,
     used in the overworld menu,
@@ -230,7 +230,7 @@ def display_main_gui() -> int | None:
     print("─" * 50)
     player.healthbar.display_health()
     print("what do you want to do?")
-    print("('wasd' + enter to move, 'save' + enter to save the game, 'i' + enter to access inventory)")
+    print("('wasd' + enter to move, 'save' to save the game,'quit' to exit the game(dont forget to save),  'i' to access inventory)")
     choice = input(">").lower()
     if choice == "save":
         save(player, current_map)
@@ -239,6 +239,9 @@ def display_main_gui() -> int | None:
         return player.health
     elif choice == "i":
         overworld_inv_menu(player)
+    elif choice == "quit":
+        print("Goodbye!")
+        exit()
     else:
         print("not in the list of commands")
 

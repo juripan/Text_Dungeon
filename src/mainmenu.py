@@ -6,7 +6,7 @@ from color_file import colors
 
 
 def saved_progress_menu() -> None:
-    saves = os.listdir(r"pythoncoding\text dungeon game\saves")
+    saves = os.listdir(r"saves\\")
     saves = [save for save in saves if save.endswith(".json")]
     print("─" * 50)
     for i, save in enumerate(saves):

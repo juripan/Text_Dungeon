@@ -1,4 +1,6 @@
 # main file used for running the whole project
+#TODO: add a game object that saves the floor number and other things that are declared as global rn
+#Maybe when entering new game the game generates all levels and their shop and encounters (encounters should be made static not a rng roll after entering a room)
 import mainmenu as mm
 from overworld_menu import display_main_gui
 

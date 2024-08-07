@@ -1,0 +1,100 @@
+[
+    {
+        "name": "Player",
+        "max_health": 1000,
+        "health": 1000,
+        "level": 0,
+        "stats": {
+            "strength": 1,
+            "dexterity": 1,
+            "vigor": 1,
+            "agility": 1,
+            "luck": 1
+        },
+        "weapon": "obj_Fists",
+        "armor": "obj_No armor",
+        "shield": "obj_No shield",
+        "inventory": {
+            "obj_Small potion of healing": 3,
+            "obj_Bomb": 3,
+            "obj_Dagger": 1,
+            "obj_Iron armor": 1,
+            "obj_Iron shield": 1,
+            "obj_Bow": 1,
+            "obj_Wooden arrow": 5,
+            "obj_Leather armor": 1,
+            "obj_Flint arrow": 3,
+            "obj_Throwing knives": 5
+        },
+        "shielded": false,
+        "vulnerable": true,
+        "money": 0,
+        "experience_points": 0,
+        "experience_cap": 10,
+        "run_success": false
+    },
+    {
+        "max_room_count": 0,
+        "max_width": 7,
+        "max_height": 5,
+        "map_layout": [
+            [
+                "00",
+                "00",
+                "00",
+                "00",
+                "12",
+                "00",
+                "00"
+            ],
+            [
+                "00",
+                "00",
+                "00",
+                "00",
+                "12",
+                "00",
+                "00"
+            ],
+            [
+                "22",
+                "12",
+                "12",
+                "12",
+                "129",
+                "12",
+                "32"
+            ],
+            [
+                "00",
+                "00",
+                "00",
+                "00",
+                "12",
+                "00",
+                "00"
+            ],
+            [
+                "00",
+                "00",
+                "00",
+                "00",
+                "12",
+                "00",
+                "00"
+            ]
+        ],
+        "player_pos": [
+            4,
+            2
+        ],
+        "current_pos": [
+            17,
+            27
+        ],
+        "origin": [
+            17,
+            27
+        ]
+    }
+]
