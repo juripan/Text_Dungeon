@@ -51,17 +51,21 @@ def display_main_menu() -> int:
     print(">QUIT (Q)<".center(logo_width))
     choice = input(">".rjust(logo_width//2))
     if not choice: # if the player presses enter the it runs the game
-        return 1
+        _return = 1
     elif choice.lower() == "c":
         saved_progress_menu()
-        return 1
+        _return = 1
     elif choice.lower() == "q":
         print("Are you sure?(y/n)")
         choice = input(">")
         if choice.lower() == "y":
-            return 0
+            _return = 0
         else:
-            return display_main_menu()
+            os.system("cls")
+            _return = display_main_menu()
     else:
+        os.system("cls")
         print("invalid command")
-        return display_main_menu()
+        _return = display_main_menu()
+    os.system("cls")
+    return _return

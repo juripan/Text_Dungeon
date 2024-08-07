@@ -1,5 +1,6 @@
 # this file manages the overworld map gui and shop gui and functions like buying and selling and the generation of the next floor
 from random import randint, choices
+import os
 
 from character_sheet import player, Player
 from saveandload import save
@@ -81,13 +82,16 @@ def buy_menu(shop_content: dict) -> None:
         choice = input(">").lower()
 
         if choice == "back" or choice == "..":
+            os.system("cls")
             break
 
         for i, key in enumerate(shop_content.keys()):
             if choice == key.name.lower() or choice == str(i + 1):
+                os.system("cls")
                 buy_item(key, shop_content)
                 break
         else:
+            os.system("cls")
             print("Item not in inventory")
     shop_menu()
 
@@ -119,13 +123,16 @@ def sell_menu() -> None:
         choice = input(">").lower()
 
         if choice == "exit" or choice == "..":
+            os.system("cls")
             break
 
         for i, key in enumerate(player.inventory.keys()):
             if choice == key.name.lower() or choice == str(i + 1):
+                os.system("cls")
                 sell_item(key, sell_percentage_value)
                 break
         else:
+            os.system("cls")
             print("Item not in inventory")
     shop_menu()
 
@@ -146,12 +153,16 @@ def shop_menu() -> None:
     print(">BUY    >SELL    >BACK")
     choice = input(">").lower()
     if choice == "buy" or choice == "1":
+        os.system("cls")
         buy_menu(shop_content)
     elif choice == "sell" or choice == "2":
+        os.system("cls")
         sell_menu()
     elif choice == "back" or choice == "..":
+        os.system("cls")
         print("Goodbye!")
     else:
+        os.system("cls")
         print("Not included in the list of commands")
         shop_menu()
 
@@ -162,6 +173,7 @@ def move_player(map_object: Map, direction: str) -> None:
         prints 'cant move there' if its out of the map or out of the room layout,
         returns: None
         """
+        os.system("cls")
         x, y = map_object.player_pos
         if map_object.map_layout[y][x][0] in (map_object.NORMAL_ROOM, map_object.BOSS_ROOM):
             map_object.map_layout[y][x] = map_object.map_layout[y][x][0] + map_object.EXPLORED_ROOM

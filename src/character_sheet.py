@@ -17,7 +17,7 @@ class Character():
     agility - run and dodge chances,
     luck - crit chances
     """
-    def __init__(self, name: str, max_health: int, stats: dict, level: int=0, inventory: dict={}) -> None:
+    def __init__(self, name: str, max_health: int, stats: dict[str, int], level: int=0, inventory: dict[itm.Item, int]={}) -> None:
         self.name = name
         self.max_health = max_health
         self.health = max_health
