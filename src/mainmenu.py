@@ -40,10 +40,10 @@ def display_main_menu() -> int:
 {}                                                                           \$$    $$                              
 {}                                                                            \$$$$$$                               
 {}=================================================================================================================={}""".format(colors["red"], colors["blue"], colors["purple"],
-                                                                                                                               colors["red"], colors["blue"], colors["purple"],
-                                                                                                                               colors["red"], colors["blue"], colors["purple"],
-                                                                                                                               colors["red"], colors["blue"], colors["purple"],
-                                                                                                                               colors["red"], colors["blue"], colors["default"])
+                                                                                                                                colors["red"], colors["blue"], colors["purple"],
+                                                                                                                                colors["red"], colors["blue"], colors["purple"],
+                                                                                                                                colors["red"], colors["blue"], colors["purple"],
+                                                                                                                                colors["red"], colors["blue"], colors["default"])
     print(LOGO)
     logo_width: int = 114
     print(">NEW GAME (ENTER)<".center(logo_width))
