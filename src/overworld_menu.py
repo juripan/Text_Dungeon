@@ -33,7 +33,7 @@ def generate_floor():
     current_map.create_special_rooms()
 
     shop_content = generate_shop_stock()
-    return current_map, shop_content, floor_counter + 1
+    return (current_map, shop_content, floor_counter + 1)
 
 
 def generate_shop_stock() -> dict[itm.Item, int]:
@@ -255,6 +255,8 @@ def display_main_gui() -> int | None:
         print("Goodbye!")
         exit()
     else:
+        os.system("cls")
         print("not in the list of commands")
+
 
 current_map, shop_content, floor_counter =  generate_floor() #triggered after starting the game to generate the floor and shop

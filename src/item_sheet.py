@@ -1,5 +1,5 @@
 from color_file import colors
-
+from character_sheet import Character, Player, Enemy
 
 class Item():
     """
@@ -17,7 +17,7 @@ class Weapon(Item):
         self.damage = damage
         self.damage_type = damage_type
     
-    def use(self, user, target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
+    def use(self, user: Character, target: Character): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
         if user.weapon == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.weapon.name}")
             user.inventory[user.weapon] += 1
@@ -35,7 +35,7 @@ class RangedWeapon(Weapon):
     def __init__(self, name: str, damage: int, damage_type: str, weapon_range: str, cost: int) -> None:
         super().__init__(name, damage, damage_type, cost)
         self.weapon_range = weapon_range
-        self.loaded = False # default False, saves the type of ammo that is loaded into the weapon
+        self.loaded: Ammo | bool = False # default False, saves the type of ammo that is loaded into the weapon
     
     def use(self, user, target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
         if user.weapon == self: # if you already have it equipped it unequips the item
@@ -56,7 +56,7 @@ class Armor(Item):
         super().__init__(name, cost)
         self.resistance = resistance
     
-    def use(self, user, target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
+    def use(self, user: Character, _target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
         if user.armor == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.armor.name}")
             user.inventory[user.armor] += 1
@@ -75,7 +75,7 @@ class Shield(Item):
         super().__init__(name, cost)
         self.sturdiness = sturdiness
     
-    def use(self, user, target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
+    def use(self, user: Character, _target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
         if user.shield == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.shield.name}")
             user.inventory[user.shield] += 1
@@ -97,7 +97,7 @@ class HealingItem(Item):
         super().__init__(name, cost)
         self.heal_amount = heal_amount
     
-    def use(self, user, target): # note: you can heal anyone and I mean ANYONE, even an enemy
+    def use(self, user: Character, target: Player | Enemy): # note: you can heal anyone and I mean ANYONE, even an enemy
         if user.inventory.get(self) > 0:
             healed = target.max_health * self.heal_amount // 100
             target.health += healed
@@ -116,7 +116,7 @@ class Ammo(Item):
         super().__init__(name, cost)
         self.piercing = piercing
     
-    def load_weapon(self, user, weapon):
+    def load_weapon(self, user: Character, weapon: RangedWeapon):
         if weapon.loaded != self:
             weapon.damage += int(weapon.damage * ((self.piercing * 5) / 100))
             user.inventory[self] -= 1
@@ -134,7 +134,7 @@ class OffensiveItem(Item): #note: ignores armor
         self.damage = damage
         self.splash_damage = splash_damage
     
-    def use(self, user, target):
+    def use(self, user: Character, target):
         if user.inventory.get(self) > 0:
             if self.splash_damage:
                 for enemy in target:
@@ -202,22 +202,25 @@ bomb = OffensiveItem(name="Bomb", damage=80, splash_damage=True, cost=20)
 throwing_knives = OffensiveItem(name="Throwing knives", damage=50, splash_damage=False, cost=5)
 
 
-every_item: tuple = (fists, iron_sword, dagger, 
-              bow, short_bow, 
-              no_armor, leather_armor, chainmail_armor, iron_armor, 
-              no_shield, wooden_shield, iron_shield, 
-              wooden_arrow, flint_arrow,
-              small_health, medium_health, big_health,
-              bomb, dynamite, throwing_knives
-              )
+every_item: tuple = (
+    fists, iron_sword, dagger, 
+    bow, short_bow, 
+    no_armor, leather_armor, chainmail_armor, iron_armor, 
+    no_shield, wooden_shield, iron_shield, 
+    wooden_arrow, flint_arrow,
+    small_health, medium_health, big_health,
+    bomb, dynamite, throwing_knives
+)
 
-consumables: tuple = (wooden_arrow, flint_arrow,
-               small_health, medium_health, big_health,
-               bomb, dynamite, throwing_knives
-               )
+consumables: tuple = (
+    wooden_arrow, flint_arrow,
+    small_health, medium_health, big_health,
+    bomb, dynamite, throwing_knives
+)
 
-equipables: tuple = (iron_sword, dagger, 
-              bow, short_bow, 
-              leather_armor, chainmail_armor, iron_armor, 
-              wooden_shield, iron_shield
-              )
+equipables: tuple = (
+    iron_sword, dagger, 
+    bow, short_bow, 
+    leather_armor, chainmail_armor, iron_armor, 
+    wooden_shield, iron_shield
+)

@@ -1,17 +1,18 @@
 #battle manager, contains and manages turns and events that occur during the battle and after it
+import os
 from random import randint, choice
 
-from character_sheet import player, all_enemies, all_bosses
+from character_sheet import player, all_enemies, all_bosses, Enemy
 from color_file import colors
 
 
-def generate_encounter(all_enemies: tuple, boss: bool = False) -> None: #TODO: add enemy behavior here (AI)
+def generate_encounter(all_enemies: tuple, boss: bool = False) -> list[Enemy]: #TODO: add enemy behavior here (AI)
     """
     generates a random encounter,
     1 to 3 enemies picked from the all_enemies list are added to the enemies list,
     if boss == True then generates 1 random boss
     """
-    enemies: list[object] = []
+    enemies: list[Enemy] = []
     copy_count: int = 0
     if boss:
         encounter_amount = 1
@@ -78,6 +79,7 @@ def level_up(level_up_points) -> None:
         else:
             print("This stat doesn't exist / is too high")
             return level_up(level_up_points)
+    os.system("cls")
 
 
 def battle_loop(boss: bool = False) -> None:
@@ -87,10 +89,10 @@ def battle_loop(boss: bool = False) -> None:
     initial_player_level = player.level
 
     if not boss:
-        enemies: list[object] = generate_encounter(all_enemies)
+        enemies: list[Enemy] = generate_encounter(all_enemies)
         print(f"{colors["yellow"]}YOU ENCOUNTERED A FOE!{colors["default"]}")
     else:
-        enemies: list[object] = generate_encounter(all_bosses, boss = True)
+        enemies: list[Enemy] = generate_encounter(all_bosses, boss = True)
         print(f"{colors["yellow"]}YOU ENCOUNTERED A BOSS!{colors["default"]}")
     
     while enemies and player.health > 0: # fight continues until enemies are dead or the player is dead

@@ -47,7 +47,7 @@ class Character():
             if other.shielded:
                 attack_damage = int(attack_damage * ((100 - other.shield.sturdiness * 15) / 100)) # if shield is up then lowers the damage
                 print(f"{other.name} blocked the attack!")
-                 
+
         other.health -= attack_damage
         other.health = max(other.health, 0) # a barrier so you dont go under 0
         other.healthbar.update_health()
@@ -115,7 +115,7 @@ class Player(Character):
         else:
             print("You cannot use/equip this item")
 
-    def run_from_battle(self, targets: list[object]): # maybe re-balance the running, its too unlikely
+    def run_from_battle(self, targets: list[Character]): # maybe re-balance the running, its too unlikely
         if isinstance(targets[0], Boss):
             print(f"{self.name} tried run away but failed!")
             print("can't run away from the boss!")
@@ -177,7 +177,7 @@ class Boss(Enemy):
         super().__init__(name, max_health, stats, level, inventory, money_dropped_on_kill, exp_dropped_on_kill)
         self.special_attack_cooldown: int = special_attack_cooldown # number of turns
     
-    def special_attack(): # TODO: add special attacks
+    def special_attack(self): # TODO: add special attacks
         pass
 
 
@@ -198,6 +198,6 @@ skeleton_king = Boss(name="Skeleton King", max_health=500, stats={"strength": 1,
                   level=0, money_dropped_on_kill=60, exp_dropped_on_kill=60, special_attack_cooldown=15)
 
 
-all_enemies: tuple = (bat, skeleton, slime) # all implemented enemies are here
+all_enemies: tuple[Enemy, ...] = (bat, skeleton, slime) # all implemented enemies are here
 
-all_bosses: tuple = (slime_king, skeleton_king) # all implemented bosses are here
+all_bosses: tuple[Boss, ...] = (slime_king, skeleton_king) # all implemented bosses are here
