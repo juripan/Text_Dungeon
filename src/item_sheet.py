@@ -1,5 +1,4 @@
 from color_file import colors
-from character_sheet import Character, Player, Enemy
 
 class Item():
     """
@@ -17,7 +16,7 @@ class Weapon(Item):
         self.damage = damage
         self.damage_type = damage_type
     
-    def use(self, user: Character, target: Character): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
+    def use(self, user, target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
         if user.weapon == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.weapon.name}")
             user.inventory[user.weapon] += 1
@@ -56,7 +55,7 @@ class Armor(Item):
         super().__init__(name, cost)
         self.resistance = resistance
     
-    def use(self, user: Character, _target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
+    def use(self, user, _target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
         if user.armor == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.armor.name}")
             user.inventory[user.armor] += 1
@@ -75,7 +74,7 @@ class Shield(Item):
         super().__init__(name, cost)
         self.sturdiness = sturdiness
     
-    def use(self, user: Character, _target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
+    def use(self, user, _target): # target isn't used cuz the user is the target automatically, still defined so it doesn't raise an error
         if user.shield == self: # if you already have it equipped it unequips the item
             print(f"{user.name} unequipped {user.shield.name}")
             user.inventory[user.shield] += 1
@@ -97,7 +96,7 @@ class HealingItem(Item):
         super().__init__(name, cost)
         self.heal_amount = heal_amount
     
-    def use(self, user: Character, target: Player | Enemy): # note: you can heal anyone and I mean ANYONE, even an enemy
+    def use(self, user, target): # note: you can heal anyone and I mean ANYONE, even an enemy
         if user.inventory.get(self) > 0:
             healed = target.max_health * self.heal_amount // 100
             target.health += healed
@@ -116,7 +115,7 @@ class Ammo(Item):
         super().__init__(name, cost)
         self.piercing = piercing
     
-    def load_weapon(self, user: Character, weapon: RangedWeapon):
+    def load_weapon(self, user, weapon: RangedWeapon):
         if weapon.loaded != self:
             weapon.damage += int(weapon.damage * ((self.piercing * 5) / 100))
             user.inventory[self] -= 1
@@ -134,7 +133,7 @@ class OffensiveItem(Item): #note: ignores armor
         self.damage = damage
         self.splash_damage = splash_damage
     
-    def use(self, user: Character, target):
+    def use(self, user, target):
         if user.inventory.get(self) > 0:
             if self.splash_damage:
                 for enemy in target:
